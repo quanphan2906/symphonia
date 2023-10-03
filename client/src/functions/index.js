@@ -163,9 +163,19 @@ async function testAuth() {
 		}
 	}
 
+	if (error) {
+		console.log("Calling login");
+		({ data, error } = await login(fakeEmail, fakePassword));
+		logDataAndError(data, error);
+
+		if (!error) {
+			({ user, session } = data);
+		}
+	}
+
 	// Get User
 	console.log("Calling getUser");
-	({ data: user, error } = await getUser(user.user_id));
+	({ data: user, error } = await getUser(session.access_token, user.user_id));
 	if (error) {
 		logDataAndError(data, error);
 	} else {
@@ -202,6 +212,7 @@ async function testAuth() {
 	const newfakeUserAvatar = "newUserAvatar";
 
 	({ data, error } = await updateUser(
+		session.access_token,
 		userId,
 		newfakeEmail,
 		newfakePassword,
@@ -212,7 +223,7 @@ async function testAuth() {
 	if (error) {
 		logDataAndError(data, error);
 	} else {
-		({ data: user, error } = await getUser(userId));
+		({ data: user, error } = await getUser(session.access_token, userId));
 		if (error) {
 			logDataAndError(data, error);
 		} else {
@@ -241,13 +252,13 @@ async function testAuth() {
 	// // ({ data, error } = await getUsersOfGroup("groupId"));
 	// // logDataAndError(data, error);
 
+	// Delete user
+	({ data, error } = await deleteUser(session.access_token, user.user_id));
+	logDataAndError(data, error);
+
 	// Logout
 	console.log("Calling logout");
 	({ data, error } = await logout());
-	logDataAndError(data, error);
-
-	// Delete user
-	({ data, error } = await deleteUser(user.user_id));
 	logDataAndError(data, error);
 }
 

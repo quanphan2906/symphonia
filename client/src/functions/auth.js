@@ -1,5 +1,22 @@
 import supabase from "./setup";
 
+const validateToken = async (accessToken) => {
+	if (!accessToken) {
+		console.error("Access token missing");
+		return false;
+	}
+
+	const { data: sessionWrapper, error: sessionError } =
+		await supabase.auth.getSession();
+
+	if (sessionError) {
+		console.error("Cannot fetch session information from supabase");
+		return false;
+	}
+
+	return accessToken === sessionWrapper.session.access_token ? true : false;
+};
+
 export const signup = async (email, password, username, userAvatar) => {
 	// Validate input
 	const info = [email, password, username];
@@ -23,7 +40,7 @@ export const signup = async (email, password, username, userAvatar) => {
 	}
 
 	const userId = auth.user.id;
-	const session = { auth };
+	const session = auth.session;
 
 	// Add user to database
 	const { data: user, error: userError } = await supabase
@@ -61,10 +78,13 @@ export const login = async (email, password) => {
 	}
 
 	const userId = auth.user.id;
-	const session = { auth };
+	const session = auth.session;
 
 	// Fetch user record from database
-	const { data: user, error: userError } = await getUser(userId);
+	const { data: user, error: userError } = await getUser(
+		session.access_token,
+		userId
+	);
 
 	if (userError) {
 		return { data: null, error: Error(userError.message) };
@@ -85,21 +105,33 @@ export const logout = async () => {
 	return { data: "Logged out successfully", error: null };
 };
 
-export const getUser = async (userId) => {
+export const getUser = async (accessToken, userId) => {
 	// Validate input
 	if (!userId) {
 		return { data: null, error: Error("Missing user id") };
 	}
 
+	if (!accessToken) {
+		return { data: null, error: Error("Missing authentication token") };
+	}
+
+	// Authorize user
+	if (!validateToken(accessToken)) {
+		return { data: null, error: Error("Unauthorized access") };
+	}
+
 	// Fetch user record from database
-	const { data: user, error } = await supabase
+	const { data: user, error: userError } = await supabase
 		.from("users")
 		.select("*")
 		.eq("user_id", userId)
 		.single();
 
-	const err = error ? Error(error.message) : null;
-	return { data: user, err };
+	if (userError) {
+		return { data: null, error: userError };
+	}
+
+	return { data: user, error: null };
 };
 
 export const getUsersOfGroup = async (groupId) => {
@@ -134,12 +166,18 @@ export const getUsersOfGroup = async (groupId) => {
 };
 
 export const updateUser = async (
+	accessToken,
 	userId,
 	email,
 	password,
 	username,
 	userAvatar
 ) => {
+	// Authorize user
+	if (!accessToken || !validateToken(accessToken)) {
+		return { data: null, error: Error("Unauthorized access") };
+	}
+
 	// Construct objects that contain information needed to be updated
 	const updateObject = {}; // update to database
 	const authObject = {}; // update to Supabase Auth
@@ -184,10 +222,20 @@ export const updateUser = async (
 	return { data: "User updated successfully", error: null };
 };
 
-export const deleteUser = async (userId) => {
+export const deleteUser = async (accessToken, userId) => {
+	// Authorize user
+	if (!accessToken || !validateToken(accessToken)) {
+		return { data: null, error: Error("Unauthorized access") };
+	}
+
 	// Validate input
 	if (!userId) {
 		return { data: null, error: Error("Missing user id") };
+	}
+
+	// Authorize user
+	if (!validateToken(accessToken)) {
+		return { data: null, error: Error("Unauthorized access") };
 	}
 
 	// Delete user from Supabase Auth
