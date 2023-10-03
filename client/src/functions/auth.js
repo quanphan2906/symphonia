@@ -1,6 +1,7 @@
 import supabase from "./setup";
 
 export const signup = async (email, password, username, userAvatar) => {
+	// Validate input
 	const info = [email, password, username];
 	const text = ["email", "password", "username"];
 	for (let i = 0; i < info.length; i++) {
@@ -9,8 +10,9 @@ export const signup = async (email, password, username, userAvatar) => {
 		}
 	}
 
-	// also have to check whether userAvatar is an image object
+	// TODO: also have to check whether userAvatar is an image object
 
+	// Sign up users with Supabase Auth
 	const { data: auth, error: authError } = await supabase.auth.signUp({
 		email,
 		password,
@@ -23,6 +25,7 @@ export const signup = async (email, password, username, userAvatar) => {
 	const userId = auth.user.id;
 	const session = { auth };
 
+	// Add user to database
 	const { data: user, error: userError } = await supabase
 		.from("users")
 		.insert([{ user_id: userId, email, username, user_avatar: userAvatar }])
@@ -38,6 +41,7 @@ export const signup = async (email, password, username, userAvatar) => {
 };
 
 export const login = async (email, password) => {
+	// Validate input
 	if (!email) {
 		return { data: null, error: Error("Missing email") };
 	}
@@ -45,6 +49,7 @@ export const login = async (email, password) => {
 		return { data: null, error: Error("Missing password") };
 	}
 
+	// Log user in with Supabase Auth
 	const { data: auth, error: authError } =
 		await supabase.auth.signInWithPassword({
 			email,
@@ -58,6 +63,7 @@ export const login = async (email, password) => {
 	const userId = auth.user.id;
 	const session = { auth };
 
+	// Fetch user record from database
 	const { data: user, error: userError } = await getUser(userId);
 
 	if (userError) {
@@ -68,6 +74,8 @@ export const login = async (email, password) => {
 };
 
 export const logout = async () => {
+	// Log user out with Supabase Auth.
+	// Nothing to do with database
 	const { error } = await supabase.auth.signOut();
 
 	if (error) {
@@ -78,10 +86,12 @@ export const logout = async () => {
 };
 
 export const getUser = async (userId) => {
+	// Validate input
 	if (!userId) {
 		return { data: null, error: Error("Missing user id") };
 	}
 
+	// Fetch user record from database
 	const { data: user, error } = await supabase
 		.from("users")
 		.select("*")
@@ -93,10 +103,12 @@ export const getUser = async (userId) => {
 };
 
 export const getUsersOfGroup = async (groupId) => {
+	// Validate input
 	if (!groupId) {
 		return { data: null, error: Error("Missing group id") };
 	}
 
+	// Fetch all user ids in the group
 	const { data, error } = await supabase
 		.from("group_members")
 		.select("user_id")
@@ -108,6 +120,7 @@ export const getUsersOfGroup = async (groupId) => {
 
 	const userIds = data.map((item) => item.user_id);
 
+	// Fetch records of users in the group
 	const { data: usersData, error: usersError } = await supabase
 		.from("users")
 		.select("*")
@@ -127,8 +140,9 @@ export const updateUser = async (
 	username,
 	userAvatar
 ) => {
-	const updateObject = {};
-	const authObject = {};
+	// Construct objects that contain information needed to be updated
+	const updateObject = {}; // update to database
+	const authObject = {}; // update to Supabase Auth
 
 	if (email) {
 		updateObject["email"] = email;
@@ -147,6 +161,7 @@ export const updateUser = async (
 		updateObject["user_avatar"] = userAvatar;
 	}
 
+	// Update user info in Supabase Auth
 	const { authError } = await supabase.auth.admin.updateUserById(
 		userId,
 		authObject
@@ -156,6 +171,7 @@ export const updateUser = async (
 		return { data: null, error: Error(authError.message) };
 	}
 
+	// Update user info in database
 	const { error: updateError } = await supabase
 		.from("users")
 		.update(updateObject)
@@ -169,16 +185,19 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (userId) => {
+	// Validate input
 	if (!userId) {
 		return { data: null, error: Error("Missing user id") };
 	}
 
+	// Delete user from Supabase Auth
 	const { error: authError } = await supabase.auth.admin.deleteUser(userId);
 
 	if (authError) {
 		return { data: null, error: Error(authError.message) };
 	}
 
+	// Delete user from database
 	const { userError } = await supabase
 		.from("users")
 		.delete()
