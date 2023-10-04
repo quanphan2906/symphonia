@@ -264,7 +264,7 @@ async function testAuth() {
 
 async function main() {
 	// await testGroup();
-	await testAuth();
+	// await testAuth();
 }
 
 main();
