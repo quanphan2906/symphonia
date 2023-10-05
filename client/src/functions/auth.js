@@ -1,6 +1,6 @@
 import supabase from "./setup";
 
-const validateToken = async (accessToken) => {
+export const validateToken = async (accessToken) => {
 	if (!accessToken) {
 		console.error("Access token missing");
 		return false;
@@ -116,7 +116,7 @@ export const getUser = async (accessToken, userId) => {
 	}
 
 	// Authorize user
-	if (!validateToken(accessToken)) {
+	if (!(await validateToken(accessToken))) {
 		return { data: null, error: Error("Unauthorized access") };
 	}
 
@@ -173,8 +173,13 @@ export const updateUser = async (
 	username,
 	userAvatar
 ) => {
+	// Input validation
+	if (!accessToken) {
+		return { data: null, error: Error("Missing authentication token") };
+	}
+
 	// Authorize user
-	if (!accessToken || !validateToken(accessToken)) {
+	if (!(await validateToken(accessToken))) {
 		return { data: null, error: Error("Unauthorized access") };
 	}
 
@@ -223,18 +228,17 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (accessToken, userId) => {
-	// Authorize user
-	if (!accessToken || !validateToken(accessToken)) {
-		return { data: null, error: Error("Unauthorized access") };
+	// Input validation
+	if (!accessToken) {
+		return { data: null, error: Error("Missing authentication token") };
 	}
 
-	// Validate input
 	if (!userId) {
 		return { data: null, error: Error("Missing user id") };
 	}
 
 	// Authorize user
-	if (!validateToken(accessToken)) {
+	if (!(await validateToken(accessToken))) {
 		return { data: null, error: Error("Unauthorized access") };
 	}
 
@@ -246,7 +250,7 @@ export const deleteUser = async (accessToken, userId) => {
 	}
 
 	// Delete user from database
-	const { userError } = await supabase
+	const { error: userError } = await supabase
 		.from("users")
 		.delete()
 		.eq("user_id", userId);
@@ -255,5 +259,5 @@ export const deleteUser = async (accessToken, userId) => {
 		return { data: null, error: Error(userError.message) };
 	}
 
-	return { data: "Delete successfully", error: null };
+	return { data: "User deleted successfully", error: null };
 };
