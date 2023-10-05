@@ -1,6 +1,7 @@
 import supabase from "../src/functions/setup";
 
 export const removeAllUsers = async () => {
+	// Fetch all users
 	const {
 		data: { users },
 		error: adminError,
