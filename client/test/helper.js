@@ -38,3 +38,21 @@ export const removeAllUsers = async () => {
 		}
 	}
 };
+
+export const removeAllGroups = async () => {
+	const { data: groups, error } = await supabase.from("groups").select();
+
+	for (const group of groups) {
+		const { error: truncateError } = await supabase
+			.from("groups")
+			.delete()
+			.eq("group_id", group.group_id);
+
+		if (truncateError) {
+			console.error(
+				"Error truncating 'groups' table:",
+				truncateError.message
+			);
+		}
+	}
+};
