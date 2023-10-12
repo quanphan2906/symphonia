@@ -16,3 +16,5 @@ export {
 	// deleteGroup,
 	// joinGroup,
 } from "./groups";
+
+export { createSong, getSongsByGroupId, updateSong } from "./songs";

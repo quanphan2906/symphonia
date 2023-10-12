@@ -56,3 +56,21 @@ export const removeAllGroups = async () => {
 		}
 	}
 };
+
+export const removeAllSongs = async () => {
+	const { data: songs, error } = await supabase.from("songs").select();
+
+	for (const song of songs) {
+		const { error: truncateError } = await supabase
+			.from("songs")
+			.delete()
+			.eq("song_id", song.song_id);
+
+		if (truncateError) {
+			console.error(
+				"Error truncating 'songs' table:",
+				truncateError.message
+			);
+		}
+	}
+};
