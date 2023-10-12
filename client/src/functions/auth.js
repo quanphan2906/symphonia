@@ -105,20 +105,19 @@ export const logout = async () => {
 	return { data: "Logged out successfully", error: null };
 };
 
-export const getUser = async (accessToken, userId) => {
-	// Validate input
-	if (!userId) {
-		return { data: null, error: Error("Missing user id") };
+export const getUser = async () => {
+	// Get user id from session
+	const { data: sessionWrapper, error: sessionError } =
+		await supabase.auth.getSession();
+
+	if (sessionError) {
+		return {
+			data: null,
+			error: Error("Cannot fetch session:", sessionError.message),
+		};
 	}
 
-	if (!accessToken) {
-		return { data: null, error: Error("Missing authentication token") };
-	}
-
-	// Authorize user
-	if (!(await validateToken(accessToken))) {
-		return { data: null, error: Error("Unauthorized access") };
-	}
+	const userId = sessionWrapper.session.user.id;
 
 	// Fetch user record from database
 	const { data: user, error: userError } = await supabase
@@ -165,24 +164,7 @@ export const getUsersOfGroup = async (groupId) => {
 	return { data: usersData, error: null };
 };
 
-export const updateUser = async (
-	accessToken,
-	userId,
-	email,
-	password,
-	username,
-	userAvatar
-) => {
-	// Input validation
-	if (!accessToken) {
-		return { data: null, error: Error("Missing authentication token") };
-	}
-
-	// Authorize user
-	if (!(await validateToken(accessToken))) {
-		return { data: null, error: Error("Unauthorized access") };
-	}
-
+export const updateUser = async (email, password, username, userAvatar) => {
 	// Construct objects that contain information needed to be updated
 	const updateObject = {}; // update to database
 	const authObject = {}; // update to Supabase Auth
@@ -205,16 +187,26 @@ export const updateUser = async (
 	}
 
 	// Update user info in Supabase Auth
-	const { authError } = await supabase.auth.admin.updateUserById(
-		userId,
-		authObject
-	);
+	const { authError } = await supabase.auth.updateUser(authObject);
 
 	if (authError) {
 		return { data: null, error: Error(authError.message) };
 	}
 
 	// Update user info in database
+
+	const { data: sessionWrapper, error: sessionError } =
+		await supabase.auth.getSession();
+
+	if (sessionError) {
+		return {
+			data: null,
+			error: Error("Cannot fetch session:", sessionError.message),
+		};
+	}
+
+	const userId = sessionWrapper.session.user.id;
+
 	const { error: updateError } = await supabase
 		.from("users")
 		.update(updateObject)

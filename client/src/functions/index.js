@@ -3,7 +3,7 @@ export {
 	login,
 	logout,
 	getUser,
-	getUsersOfGroup,
+	// getUsersOfGroup,
 	updateUser,
 	deleteUser,
 } from "./auth";
