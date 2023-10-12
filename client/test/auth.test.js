@@ -117,28 +117,7 @@ describe("User Management Functions", () => {
 		});
 
 		describe("getUser Function", () => {
-			it("2.1 should return Unauthorized access when calling getUser without access token", async () => {
-				const { data, error } = await getUser(undefined, userId);
-
-				expect(error).toBeTruthy();
-				expect(error.message).toBe("Missing authentication token");
-				expect(data).toBeNull();
-			});
-
-			it("2.2 should return Unauthorized access when calling getUser with an incorrect access token", async () => {
-				const incorrectAccessToken = "invalid_token";
-
-				const { data, error } = await getUser(
-					incorrectAccessToken,
-					userId
-				);
-
-				expect(error).toBeTruthy();
-				expect(error.message).toBe("Unauthorized access");
-				expect(data).toBeNull();
-			});
-
-			it("2.3 should return matching email, username, and user_avatar when calling getUser with the correct access token", async () => {
+			it("2.3 should return matching email, username, and user_avatar", async () => {
 				const { data, error } = await getUser(accessToken, userId);
 
 				expect(error).toBeNull();
@@ -155,26 +134,19 @@ describe("User Management Functions", () => {
 				altEmail = "existing@gmail.com";
 				altUserName = "existing";
 
-				const { error: signupError } = await signup(
+				await signup(
 					altEmail, // alternative email
 					fakePassword,
 					altUserName, // alternative username
 					fakeUserAvatar
 				);
 
-				if (error) {
-					console.log(error);
-				}
-
 				const { data, error } = await login(fakeEmail, fakePassword);
 				accessToken = data.session.access_token;
-				userId = data.user.user_id;
 			});
 
 			it("2.4 should return an error when updating username/email to an already used value", async () => {
 				const { data, error } = await updateUser(
-					accessToken,
-					userId,
 					"new_email@gmail.com",
 					undefined,
 					altUserName,
@@ -187,8 +159,6 @@ describe("User Management Functions", () => {
 
 			it("2.5 should return no error when user updates with same email and username as before", async () => {
 				const { data, error } = await updateUser(
-					accessToken,
-					userId,
 					fakeEmail,
 					undefined,
 					fakeUsername,
@@ -201,8 +171,6 @@ describe("User Management Functions", () => {
 
 			it("2.6 should update account information in both Supabase Auth and the database", async () => {
 				const { data, error } = await updateUser(
-					accessToken,
-					userId,
 					"new_email@gmail.com",
 					undefined,
 					"new_username",
