@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from "react";
 import { UserContext } from "@/context/UserContext";
 import styles from "@/styles/GroupDetails.module.css";
-import SongItem from "@/components/SongItem";
-import AddSongForm from "@/components/AddSongForm";
-import FilterPanel from "@/components/FilterPanel";
+import SongItem from "@/components/database/SongItem";
+import AddSongForm from "@/components/database/AddSongForm";
+import FilterPanel from "@/components/database/FilterPanel";
 import { updateGroupName } from "@/data/dataFetch";
 import { useRouter } from "next/router";
 
