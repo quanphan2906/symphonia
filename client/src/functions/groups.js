@@ -30,14 +30,24 @@ export async function createGroup(groupName, avatar) {
 	}
 	const userId = userWrapper.user.id;
 
-	const { data: admin, error: adminError } = await supabase
+	const { error: adminError } = await supabase
 		.from("memberships")
-		.insert([{ group_id: groupId, user_id: userId, role: "admin" }])
-		.select()
-		.single();
+		.insert([{ group_id: groupId, user_id: userId, role: "admin" }]);
 
 	if (adminError) {
 		return { data: null, error: Error(adminError.message) };
+	}
+
+	const { data: admin, error } = await supabase
+		.from("memberships")
+		.select("*")
+		.eq("user_id", userId)
+		.eq("group_id", groupId)
+		.limit(1)
+		.single();
+
+	if (error) {
+		return { data: null, error: Error(error.message) };
 	}
 
 	return { data: { group, admin }, error: null };
@@ -121,16 +131,4 @@ export const deleteGroup = async (groupId) => {
 
 	let err = error ? Error(error.message) : null;
 	return { data: null, err };
-};
-
-export const joinGroup = async (userId, groupId) => {
-	const { error } = await supabase
-		.from("group_members")
-		.insert([{ user_id: userId, group_id: groupId }])
-		.onConflict(["user_id", "group_id"])
-		.ignore();
-
-	if (error) {
-		throw error;
-	}
 };

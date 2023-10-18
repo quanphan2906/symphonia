@@ -133,37 +133,6 @@ export const getUser = async () => {
 	return { data: user, error: null };
 };
 
-export const getUsersOfGroup = async (groupId) => {
-	// Validate input
-	if (!groupId) {
-		return { data: null, error: Error("Missing group id") };
-	}
-
-	// Fetch all user ids in the group
-	const { data, error } = await supabase
-		.from("group_members")
-		.select("user_id")
-		.eq("group_id", groupId);
-
-	if (error) {
-		return { data: null, error: Error(error.message) };
-	}
-
-	const userIds = data.map((item) => item.user_id);
-
-	// Fetch records of users in the group
-	const { data: usersData, error: usersError } = await supabase
-		.from("users")
-		.select("*")
-		.in("id", userIds);
-
-	if (usersError) {
-		return { data: null, error: Error(error.message) };
-	}
-
-	return { data: usersData, error: null };
-};
-
 export const updateUser = async (email, password, username, userAvatar) => {
 	// Construct objects that contain information needed to be updated
 	const updateObject = {}; // update to database
