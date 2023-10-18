@@ -4,7 +4,6 @@ import {
 	getGroup,
 	updateGroup,
 	deleteGroup,
-	joinGroup,
 	logout,
 	signup,
 } from "../src/functions";

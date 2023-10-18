@@ -1,12 +1,4 @@
-export {
-	signup,
-	login,
-	logout,
-	getUser,
-	// getUsersOfGroup,
-	updateUser,
-	deleteUser,
-} from "./auth";
+export { signup, login, logout, getUser, updateUser, deleteUser } from "./auth";
 
 export {
 	createGroup,
@@ -14,7 +6,8 @@ export {
 	getGroup,
 	updateGroup,
 	// deleteGroup,
-	// joinGroup,
 } from "./groups";
+
+export { getMembers, joinGroup } from "./member";
 
 export { createSong, getSongsByGroupId, updateSong } from "./songs";
