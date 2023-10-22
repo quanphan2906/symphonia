@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { styled } from "@mui/material/styles";
 import Avatar from "@mui/material/Avatar";
@@ -12,6 +12,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
+import { GroupContext } from "@/context/GroupContext";
+import { UserContext } from "@/context/UserContext";
+import Snackbar from "@/components/Snackbar";
 
 const GroupListContainer = styled("div")({
   display: "flex",
@@ -46,33 +49,36 @@ const GroupButton = styled(IconButton)({
   width: "40px",
   height: "40px",
   alignSelf: "center",
-  // color: "#ffffff", // Set text/icon color to white
-  // backgroundColor: "#bdbdbd", // Match the background color with GroupAvatar
-  // "&:hover": {
-  //   backgroundColor: "#3d3d3d", // Slightly darker shade on hover
-  // },
 });
 
-const dummyGroups = [
-  { id: "1", name: "Group 1" },
-  { id: "2", name: "Hello" },
-  { id: "3", name: "Rock For ever" },
-  // ... more dummy groups
-];
-
 export default function GroupList() {
+  const { groups, createGroup, getGroupsByUserId } = useContext(GroupContext); 
+  const { user } = useContext(UserContext);
   const router = useRouter();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [groupMembers, setGroupMembers] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+
+  useEffect(() => {
+    const fetchGroups = async () => {
+      const { error } = await getGroupsByUserId(user.user_id);
+      if (error) {
+        setError("Error fetching groups: " + error.message);
+      }
+    };
+
+    fetchGroups();
+  }, [user.user_id]);
 
   const handleGroupClick = (groupId) => {
     router.push(`/groups/${groupId}`);
   };
 
   const handleDiscoverGroupsClick = () => {
-    // ... handle Discover Public Groups action
+    // TODO: handle Discover Public Groups action
   };
 
   const handleAddGroupClick = () => {
@@ -83,15 +89,21 @@ export default function GroupList() {
     setIsDialogOpen(false);
   };
 
-  const handleDialogSubmit = () => {
-    // Handle form submission, e.g., create group and invite members
+  const handleDialogSubmit = async () => {
+    const { data, error } = await createGroup(groupName, null); // TODO: Add avatar, Assuming no avatar for simplicity
+    if (!error && data) {
+      setSuccess("Group created successfully");
+    } else {
+      setError("Error creating group:" + error.message);
+    }
     setIsDialogOpen(false);
   };
+
   return (
     <GroupListContainer>
-      {dummyGroups.map((group) => (
-        <GroupAvatar key={group.id} onClick={() => handleGroupClick(group.id)}>
-          {group.name.charAt(0)}
+      {groups.map((group) => (
+        <GroupAvatar key={group.group_id} onClick={() => handleGroupClick(group.group_id)}>
+          {group.group_name.charAt(0).toUpperCase()}
         </GroupAvatar>
       ))}
       <ButtonContainer>
@@ -130,7 +142,7 @@ export default function GroupList() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} color="primary">
+          <Button onClick={handleDialogClose} color='primary'>
             Cancel
           </Button>
           <Button onClick={handleDialogSubmit} variant='contained' color='primary'>
@@ -138,6 +150,9 @@ export default function GroupList() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar message={error} status='error' />
+      <Snackbar message={success} status='success' />
     </GroupListContainer>
   );
 }

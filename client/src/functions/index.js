@@ -5,7 +5,7 @@ export {
 	getGroupsByUserId,
 	getGroup,
 	updateGroup,
-	// deleteGroup,
+	deleteGroup,
 } from "./groups";
 
 export { getMembers, joinGroup } from "./member";

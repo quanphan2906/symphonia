@@ -1,12 +1,18 @@
-// src/pages/signup.jsx
 import React, { useState, useContext, useEffect } from "react";
-import { Button, TextField, Grid, Paper, Typography, Link } from "@mui/material";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import { UserContext } from "@/context/UserContext";
+import Snackbar from "@/components/Snackbar";
 
 function SignupPage() {
-  const { user } = useContext(UserContext);
+  const { user, signup } = useContext(UserContext);
   const [credentials, setCredentials] = useState({
     firstName: "",
     lastName: "",
@@ -14,6 +20,8 @@ function SignupPage() {
     password: "",
     verifyPassword: "",
   });
+
+  const [error, setError] = useState(null); 
   const router = useRouter();
 
   useEffect(() => {
@@ -22,16 +30,31 @@ function SignupPage() {
     }
   }, [user, router]);
 
+  const handleLoginClick = () => {
+    router.push("/auth/login");
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Register user...
-    // On success:
-    // router.push('/');
+    const { firstName, lastName, email, password, verifyPassword } = credentials;
+
+    if (password !== verifyPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
+    const response = await signup({ firstName, lastName, email, password });
+    if (response.success) {
+      router.push("/"); // Redirect to dashboard on successful signup
+    } else {
+      setError(response.error.message); // Set error state if signup failed
+      setOpen(true);
+    }
   };
 
   return (
@@ -118,7 +141,7 @@ function SignupPage() {
             </Button>
             <Grid container justifyContent='flex-end' style={{ marginTop: "1rem" }}>
               <Grid item>
-                <Link href='/auth/login' variant='body2'>
+                <Link onClick={handleLoginClick} component='button' variant='body2'>
                   Already have an account? Login
                 </Link>
               </Grid>
@@ -126,6 +149,8 @@ function SignupPage() {
           </form>
         </Paper>
       </Grid>
+
+      <Snackbar message={error} status='error' />
     </div>
   );
 }

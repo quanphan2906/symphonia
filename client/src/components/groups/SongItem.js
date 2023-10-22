@@ -6,7 +6,6 @@ import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from "@mui/material/ListItem";
-import ListItemText from "@mui/material/ListItemText";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
@@ -32,10 +31,10 @@ const SongItem = ({ song, onDelete, onAddTag, onDeleteTag }) => {
     <SongListItem>
       <Box sx={{ flexGrow: 1 }}>
         <Typography variant='subtitle1' gutterBottom>
-          {`${song.name} - ${song.artist}`}
+          {`${song.name} - ${song.author}`}
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          {song.tags.map((tag, index) => (
+          {song.tags?.map((tag, index) => (
             <Chip key={index} label={tag} onDelete={() => onDeleteTag(song.id, tag)} />
           ))}
         </Box>

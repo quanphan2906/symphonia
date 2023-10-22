@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useContext } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -10,6 +10,9 @@ import Badge from "@mui/material/Badge";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import Button from "@mui/material/Button";
+import Link from "@mui/material/Link";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import { UserContext } from "@/context/UserContext";
 import { useRouter } from "next/router";
 
@@ -54,9 +57,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Header() {
-  const { user } = useContext(UserContext);
+  const { user, logout } = useContext(UserContext);
   // const user = true;
   const router = useRouter();
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleLoginClick = () => {
     router.push("/auth/login");
@@ -66,17 +70,37 @@ export default function Header() {
     router.push("/auth/signup");
   };
 
+  const handleHomeClick = () => {
+    router.push("/"); // Navigate to the home page
+  };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout(); // Call the logout function from UserContext
+    handleMenuClose(); // Close the menu
+  };
+
   return (
     <AppBar position='static'>
       <Toolbar>
-        <Typography
-          variant='h6'
-          noWrap
-          component='div'
-          sx={{ display: { xs: "none", sm: "block" }, flexGrow: 1 }}
+        <Link
+          onClick={handleHomeClick}
+          component='button'
+          color='inherit'
+          underline='none'
+          sx={{ display: { xs: "none", sm: "block" }, flexGrow: 1, textAlign: "left" }}
         >
-          Connectify
-        </Typography>
+          <Typography variant='h6' noWrap>
+            Connectify
+          </Typography>
+        </Link>
         <Search>
           <SearchIconWrapper>
             <SearchIcon />
@@ -90,9 +114,12 @@ export default function Header() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton color='inherit'>
+            <IconButton color='inherit' onClick={handleMenuOpen}>
               <AccountCircle />
             </IconButton>
+            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </Menu>
           </>
         ) : (
           <>

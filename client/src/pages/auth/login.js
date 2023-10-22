@@ -1,12 +1,20 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Button, TextField, Grid, Paper, Typography, Link } from "@mui/material";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import Snackbar from "@/components/Snackbar";
+
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import { UserContext } from "@/context/UserContext";
 
 function LoginPage() {
-  const { user } = useContext(UserContext);
+  const { user, login } = useContext(UserContext); // Extract login method from context
   const [credentials, setCredentials] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null); // State to hold any login errors
   const router = useRouter();
 
   useEffect(() => {
@@ -15,16 +23,24 @@ function LoginPage() {
     }
   }, [user, router]);
 
+  const handleSignupClick = () => {
+    router.push("/auth/signup");
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prevState) => ({ ...prevState, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Authenticate user...
-    // On success:
-    // router.push('/dashboard');
+    const { email, password } = credentials;
+    const response = await login({ email, password }); // Call the login method from context
+    if (response.success) {
+      router.push("/"); // Redirect to dashboard on successful login
+    } else {
+      setError(response.error.message); // Set error state if login failed
+    }
   };
 
   return (
@@ -74,7 +90,7 @@ function LoginPage() {
             </Button>
             <Grid container justifyContent='flex-end' style={{ marginTop: "1rem" }}>
               <Grid item>
-                <Link href='/auth/signup' variant='body2'>
+                <Link onClick={handleSignupClick} component='button' variant='body2'>
                   Don't have an account? Sign Up
                 </Link>
               </Grid>
@@ -82,6 +98,8 @@ function LoginPage() {
           </form>
         </Paper>
       </Grid>
+
+      <Snackbar message={error} status='error' />
     </div>
   );
 }

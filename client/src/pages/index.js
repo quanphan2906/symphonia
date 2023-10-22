@@ -1,12 +1,10 @@
-// src/pages/index.jsx
 import React, { useContext } from "react";
 import { UserContext } from "@/context/UserContext";
 import Header from "@/components/Header";
 import GroupList from "@/components/groups/GroupList"; // Import GroupList component
 
 function Home() {
-  //   const { user } = useContext(UserContext);
-  const user = true;
+  const { user } = useContext(UserContext);
 
   return (
     <div>

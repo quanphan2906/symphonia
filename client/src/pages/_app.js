@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import UserProvider from "@/context/UserContext";
+import AppContextProvider from "@/context/AppContextProvider";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import theme from "../theme";
 
@@ -7,9 +7,9 @@ export default function App({ Component, pageProps }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <UserProvider>
+      <AppContextProvider>
         <Component {...pageProps} />
-      </UserProvider>
+      </AppContextProvider>
     </ThemeProvider>
   );
 }
