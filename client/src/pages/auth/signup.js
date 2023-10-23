@@ -21,7 +21,7 @@ function SignupPage() {
     verifyPassword: "",
   });
 
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -53,7 +53,6 @@ function SignupPage() {
       router.push("/"); // Redirect to dashboard on successful signup
     } else {
       setError(response.error.message); // Set error state if signup failed
-      setOpen(true);
     }
   };
 
