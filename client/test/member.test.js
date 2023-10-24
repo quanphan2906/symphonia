@@ -1,28 +1,47 @@
-import { getMembers, joinGroup, login, signup, logout, createGroup } from "../src/functions";
+import {
+  getMembers,
+  joinGroup,
+  login,
+  signup,
+  logout,
+  createGroup,
+} from "../src/functions";
 import { removeAllGroups, removeAllUsers } from "./helper";
 
 describe("Group Management Functions", () => {
   let groupId;
-  let testEmails, testPasswords, testFirstNames, testLastNames;
+  let testEmails;
+  let testPasswords;
+  let testFirstNames;
+  let testLastNames;
 
   beforeAll(async () => {
     await removeAllUsers();
     await removeAllGroups();
 
-    testEmails = ["user1@example.com", "user2@example.com", "user3@example.com"];
+    testEmails = [
+      "user1@example.com",
+      "user2@example.com",
+      "user3@example.com",
+    ];
     testPasswords = ["password1", "password2", "password3"];
     testFirstNames = ["user1", "user2", "user3"];
     testLastNames = ["user1", "user2", "user3"];
 
     for (let i = 0; i < 3; i++) {
-      await signup(testEmails[i], testPasswords[i], testFirstNames[i], testLastNames[i]);
+      await signup(
+        testEmails[i],
+        testPasswords[i],
+        testFirstNames[i],
+        testLastNames[i]
+      );
     }
 
     await login(testEmails[0], testPasswords[0]);
 
     const avatar = "groupAvatar";
     const groupName = "New Group";
-    const { data, error } = await createGroup(groupName, avatar);
+    const { data } = await createGroup(groupName, avatar);
     groupId = data.group.group_id;
   }, 20000);
 

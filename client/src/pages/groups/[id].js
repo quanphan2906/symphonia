@@ -1,22 +1,19 @@
-import React, { useState, useContext } from "react";
-import { UserContext } from "@/context/UserContext";
+import React, { useContext } from "react";
 import { useRouter } from "next/router";
-import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import { UserContext } from "@/context/UserContext";
 
 import Header from "@/components/Header";
 import GroupList from "@/components/groups/GroupList"; // Import GroupList component
 import GroupDetails from "@/components/groups/GroupDetails";
-import Container from "@mui/material/Container";
 
-const GroupPage = () => {
+function GroupPage() {
   const { user } = useContext(UserContext);
   const router = useRouter();
   const groupId = router.query.id;
 
   // TODO: In all event handlers, need to update database
   // TODO: Use id of the group to fetch group data
-
-  const handleDeleteGroup = (groupId) => {};
 
   return (
     <div>
@@ -26,12 +23,12 @@ const GroupPage = () => {
           <GroupList />
 
           <Container>
-            <GroupDetails groupId={groupId} onDelete={handleDeleteGroup} />
+            <GroupDetails groupId={groupId} />
           </Container>
         </div>
       )}
     </div>
   );
-};
+}
 
 export default GroupPage;

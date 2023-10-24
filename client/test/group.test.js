@@ -3,7 +3,7 @@ import {
   getGroupsByUserId,
   getGroup,
   updateGroup,
-  deleteGroup,
+  // deleteGroup,
   logout,
   signup,
 } from "../src/functions";
@@ -21,7 +21,7 @@ describe("Group Management Functions", () => {
     const fakeFirstName = "test";
     const fakeLastName = "user";
     const fakeUserAvatar = "userAvatar";
-    const { data, error } = await signup(
+    const { data } = await signup(
       fakeEmail,
       fakePassword,
       fakeFirstName,
@@ -101,7 +101,11 @@ describe("Group Management Functions", () => {
     avatar = "newGroupAvatar";
     groupName = "Updated Group";
 
-    const { data, error } = await updateGroup(group.group_id, groupName, avatar);
+    const { data, error } = await updateGroup(
+      group.group_id,
+      groupName,
+      avatar
+    );
 
     expect(error).toBeNull();
     expect(data).toBeTruthy();

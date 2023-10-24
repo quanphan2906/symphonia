@@ -3,7 +3,7 @@ import { createSong, getSongsByGroupId, updateSong } from "@/functions";
 
 export const SongContext = createContext();
 
-const SongProvider = ({ children }) => {
+function SongProvider({ children }) {
   const [songs, setSongs] = useState([]);
 
   const handleCreateSong = async (groupId, name, author, coverImage) => {
@@ -27,9 +27,9 @@ const SongProvider = ({ children }) => {
   const handleUpdateSong = async (songId, name, author, coverImage) => {
     const { data, error } = await updateSong(songId, name, author, coverImage);
     if (data) {
-      setSongs((prevSongs) => {
-        return prevSongs.map((song) => (song.song_id === songId ? data : song));
-      });
+      setSongs((prevSongs) =>
+        prevSongs.map((song) => (song.song_id === songId ? data : song))
+      );
       return { success: true };
     }
     return { success: false, error };
@@ -47,6 +47,6 @@ const SongProvider = ({ children }) => {
       {children}
     </SongContext.Provider>
   );
-};
+}
 
 export default SongProvider;

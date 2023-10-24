@@ -3,7 +3,7 @@ import { login as supabaseLogin, signup as supabaseSignup } from "@/functions";
 
 export const UserContext = createContext();
 
-const UserProvider = ({ children }) => {
+function UserProvider({ children }) {
   const [user, setUser] = useState(null);
 
   const signup = async (userData) => {
@@ -25,7 +25,10 @@ const UserProvider = ({ children }) => {
 
   const login = async (userData) => {
     // Simulate successful login
-    const { data, error } = await supabaseLogin(userData.email, userData.password);
+    const { data, error } = await supabaseLogin(
+      userData.email,
+      userData.password
+    );
     if (data) {
       setUser(data.user);
       return { success: true };
@@ -40,7 +43,11 @@ const UserProvider = ({ children }) => {
     setUser(null);
   };
 
-  return <UserContext.Provider value={{ user, signup, login, logout }}>{children}</UserContext.Provider>;
-};
+  return (
+    <UserContext.Provider value={{ user, signup, login, logout }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
 
 export default UserProvider;

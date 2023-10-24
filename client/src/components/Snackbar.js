@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
-const CustomSnackbar = ({ message, status }) => {
+function CustomSnackbar({ message, status }) {
   const [open, setOpen] = useState(Boolean(message));
 
   useEffect(() => {
@@ -30,6 +30,6 @@ const CustomSnackbar = ({ message, status }) => {
       </Alert>
     </Snackbar>
   );
-};
+}
 
 export default CustomSnackbar;

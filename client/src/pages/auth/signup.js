@@ -41,7 +41,8 @@ function SignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { firstName, lastName, email, password, verifyPassword } = credentials;
+    const { firstName, lastName, email, password, verifyPassword } =
+      credentials;
 
     if (password !== verifyPassword) {
       setError("Passwords do not match.");
@@ -61,86 +62,94 @@ function SignupPage() {
       <Header />
       <Grid
         container
-        justifyContent='center'
-        alignItems='center'
+        justifyContent="center"
+        alignItems="center"
         style={{ height: "calc(100vh - 64px)" }}
       >
         <Paper elevation={4} style={{ padding: "2rem" }}>
-          <Typography variant='h5' align='center' gutterBottom>
+          <Typography variant="h5" align="center" gutterBottom>
             Sign Up
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  label='First Name'
-                  name='firstName'
+                  label="First Name"
+                  name="firstName"
                   value={credentials.firstName}
                   onChange={handleChange}
-                  autoComplete='given-name'
+                  autoComplete="given-name"
                   autoFocus
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
-                  variant='outlined'
-                  margin='normal'
+                  variant="outlined"
+                  margin="normal"
                   fullWidth
-                  label='Last Name'
-                  name='lastName'
+                  label="Last Name"
+                  name="lastName"
                   value={credentials.lastName}
                   onChange={handleChange}
-                  autoComplete='family-name'
+                  autoComplete="family-name"
                 />
               </Grid>
             </Grid>
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
-              label='Email Address'
-              name='email'
+              label="Email Address"
+              name="email"
               value={credentials.email}
               onChange={handleChange}
-              autoComplete='email'
+              autoComplete="email"
             />
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
-              label='Password'
-              name='password'
-              type='password'
+              label="Password"
+              name="password"
+              type="password"
               value={credentials.password}
               onChange={handleChange}
-              autoComplete='new-password'
+              autoComplete="new-password"
             />
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
-              label='Verify Password'
-              name='verifyPassword'
-              type='password'
+              label="Verify Password"
+              name="verifyPassword"
+              type="password"
               value={credentials.verifyPassword}
               onChange={handleChange}
-              autoComplete='new-password'
+              autoComplete="new-password"
             />
             <Button
-              type='submit'
+              type="submit"
               fullWidth
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               style={{ marginTop: "1rem" }}
             >
               Sign Up
             </Button>
-            <Grid container justifyContent='flex-end' style={{ marginTop: "1rem" }}>
+            <Grid
+              container
+              justifyContent="flex-end"
+              style={{ marginTop: "1rem" }}
+            >
               <Grid item>
-                <Link onClick={handleLoginClick} component='button' variant='body2'>
+                <Link
+                  onClick={handleLoginClick}
+                  component="button"
+                  variant="body2"
+                >
                   Already have an account? Login
                 </Link>
               </Grid>
@@ -149,7 +158,7 @@ function SignupPage() {
         </Paper>
       </Grid>
 
-      <Snackbar message={error} status='error' />
+      <Snackbar message={error} status="error" />
     </div>
   );
 }

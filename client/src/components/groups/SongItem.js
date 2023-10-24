@@ -17,7 +17,7 @@ const SongListItem = styled(ListItem)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
 }));
 
-const SongItem = ({ song, onDelete, onAddTag, onDeleteTag }) => {
+function SongItem({ song, onDelete, onAddTag, onDeleteTag }) {
   const [newTag, setNewTag] = useState("");
 
   const handleAddTag = () => {
@@ -30,32 +30,40 @@ const SongItem = ({ song, onDelete, onAddTag, onDeleteTag }) => {
   return (
     <SongListItem>
       <Box sx={{ flexGrow: 1 }}>
-        <Typography variant='subtitle1' gutterBottom>
+        <Typography variant="subtitle1" gutterBottom>
           {`${song.name} - ${song.author}`}
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
           {song.tags?.map((tag, index) => (
-            <Chip key={index} label={tag} onDelete={() => onDeleteTag(song.id, tag)} />
+            <Chip
+              key={index}
+              label={tag}
+              onDelete={() => onDeleteTag(song.id, tag)}
+            />
           ))}
         </Box>
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-        <IconButton color='primary' aria-label='Add tag' onClick={handleAddTag}>
+        <IconButton color="primary" aria-label="Add tag" onClick={handleAddTag}>
           <AddIcon />
         </IconButton>
         <TextField
-          label='Tag'
-          variant='outlined'
-          size='small'
+          label="Tag"
+          variant="outlined"
+          size="small"
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
         />
       </Box>
-      <IconButton edge='end' aria-label='Delete song' onClick={() => onDelete(song.id)}>
+      <IconButton
+        edge="end"
+        aria-label="Delete song"
+        onClick={() => onDelete(song.id)}
+      >
         <DeleteIcon />
       </IconButton>
     </SongListItem>
   );
-};
+}
 
 export default SongItem;

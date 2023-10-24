@@ -1,12 +1,22 @@
 import { validateToken } from "../src/functions/auth";
-import { signup, login, logout, getUser, updateUser, deleteUser } from "../src/functions/index";
+import {
+  signup,
+  login,
+  // logout,
+  getUser,
+  updateUser,
+  deleteUser,
+} from "../src/functions/index";
 
 import { removeAllUsers } from "./helper";
 
 describe("User Management Functions", () => {
-  let user;
-  let session;
-  let fakeEmail, fakePassword, fakeUserAvatar, fakeFirstName, fakeLastName, fakeUsername;
+  let fakeEmail;
+  let fakePassword;
+  let fakeUserAvatar;
+  let fakeFirstName;
+  let fakeLastName;
+  let fakeUsername;
 
   beforeAll(async () => {
     await removeAllUsers();
@@ -83,7 +93,10 @@ describe("User Management Functions", () => {
     });
 
     it("1.5 should return error if no account with provided credentials", async () => {
-      const { data, error } = await login("nonexistentemail@gmail.com", "fakepassword");
+      const { data, error } = await login(
+        "nonexistentemail@gmail.com",
+        "fakepassword"
+      );
 
       expect(error).toBeTruthy();
       expect(error.message).toBe("Invalid login credentials");
@@ -104,9 +117,10 @@ describe("User Management Functions", () => {
   });
 
   describe("After user is logged in", () => {
-    let accessToken, userId;
+    let accessToken;
+    let userId;
     beforeAll(async () => {
-      const { data, error } = await login(fakeEmail, fakePassword);
+      const { data } = await login(fakeEmail, fakePassword);
       accessToken = data.session.access_token;
       userId = data.user.user_id;
     });
@@ -123,7 +137,8 @@ describe("User Management Functions", () => {
     });
 
     describe("updateUser function", () => {
-      let altEmail, altUserName;
+      let altEmail;
+      let altUserName;
 
       beforeAll(async () => {
         altEmail = "existing@gmail.com";
@@ -136,7 +151,7 @@ describe("User Management Functions", () => {
           fakeUserAvatar
         );
 
-        const { data, error } = await login(fakeEmail, fakePassword);
+        const { data } = await login(fakeEmail, fakePassword);
         accessToken = data.session.access_token;
       });
 
@@ -154,7 +169,12 @@ describe("User Management Functions", () => {
       // });
 
       it("2.5 should return no error when user updates with same email and username as before", async () => {
-        const { data, error } = await updateUser(fakeEmail, undefined, fakeUsername, undefined);
+        const { data, error } = await updateUser(
+          fakeEmail,
+          undefined,
+          fakeUsername,
+          undefined
+        );
 
         expect(error).toBeNull();
         expect(data).toBe("User updated successfully");
