@@ -1,32 +1,32 @@
 name: Jest Automatic Testing
 
-on: pull_request
+on: push
 
 jobs:
-  # ID of the job
-  run-jest-tests:
-    # Name of the job as it will be displayed in GitHub
-    name: Jest Tests
-    runs-on: ubuntu-latest
+	# ID of the job
+	run-jest-tests:
+		# Name of the job as it will be displayed in GitHub
+		name: Jest Tests
+		runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout under $GITHUB_WORKSPACE
-        uses: actions/checkout@main
-        
-      - name: Set up NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+		steps:
+			- name: Checkout under $GITHUB_WORKSPACE
+				uses: actions/checkout@main
+				
+			- name: Set up NodeJS
+				uses: actions/setup-node@v3
+				with:
+					node-version: 16
 
-      - name: Install all dependencies
-        working-directory: client
-        run: npm install
+			- name: Install all dependencies
+				working-directory: client
+				run: npm install
 
-      - name: Create .env.local
-        run: |
-          echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" > client/.env.local
-          echo "NEXT_PUBLIC_SUPABASE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_KEY }}" >> client/.env.local
+			- name: Create .env.local
+				run: |
+					echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" > client/.env.local
+					echo "NEXT_PUBLIC_SUPABASE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_KEY }}" >> client/.env.local
 
-      - name: Run Jest Tests
-        working-directory: client
-        run: npm test
+			- name: Run Jest Tests
+				working-directory: client
+				run: npm test
