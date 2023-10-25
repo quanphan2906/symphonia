@@ -1,34 +1,53 @@
 import React, { createContext, useState } from "react";
-import { login as supabaseLogin } from "@/functions";
+import { login as supabaseLogin, signup as supabaseSignup } from "@/functions";
 
 export const UserContext = createContext();
 
-const UserProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
+function UserProvider({ children }) {
+  const [user, setUser] = useState(null);
 
-	const login = (userData) => {
-		// Simulate successful login
-		const user = supabaseLogin(userData.username, userData.password);
+  const signup = async (userData) => {
+    const { data, error } = await supabaseSignup(
+      userData.email,
+      userData.password,
+      userData.firstName,
+      userData.lastName,
+      userData.userAvatar
+    );
+    if (data) {
+      setUser(data.user);
+      return { success: true };
+    }
 
-		if (user) {
-			setUser(user);
-			return true;
-		}
+    console.error(error);
+    return { success: false, error };
+  };
 
-		console.error("User not found");
-		return false;
-	};
+  const login = async (userData) => {
+    // Simulate successful login
+    const { data, error } = await supabaseLogin(
+      userData.email,
+      userData.password
+    );
+    if (data) {
+      setUser(data.user);
+      return { success: true };
+    }
 
-	const logout = () => {
-		// Simulate logout
-		setUser(null);
-	};
+    console.error(error);
+    return { success: false, error };
+  };
 
-	return (
-		<UserContext.Provider value={{ user, login, logout }}>
-			{children}
-		</UserContext.Provider>
-	);
-};
+  const logout = () => {
+    // Simulate logout
+    setUser(null);
+  };
+
+  return (
+    <UserContext.Provider value={{ user, signup, login, logout }}>
+      {children}
+    </UserContext.Provider>
+  );
+}
 
 export default UserProvider;
