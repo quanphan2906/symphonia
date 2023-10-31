@@ -127,7 +127,7 @@ function GroupDetails({ groupId }) {
       <List>
         {filteredSongs.map((song) => (
           <SongItem
-            key={song.id}
+            key={song.song_id}
             song={song}
             onDelete={handleDeleteSong}
             onAddTag={handleAddTag}
