@@ -71,7 +71,7 @@ export default function GroupList() {
     };
 
     fetchGroups();
-  }, [user.user_id, getGroupsByUserId]);
+  }, [user.user_id]);
 
   const handleGroupClick = (groupId) => {
     router.push(`/groups/${groupId}`);

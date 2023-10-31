@@ -58,7 +58,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Header() {
   const { user, logout } = useContext(UserContext);
-  // const user = true;
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
 
