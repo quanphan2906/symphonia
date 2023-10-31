@@ -61,3 +61,57 @@ export const joinGroup = async (groupId) => {
 
   return { data: "Successfully join group", error: null };
 };
+
+export const inviteMember = async (groupId, email, role) => {
+  // Validate input
+  if (!groupId || !email) {
+    return { data: null, error: Error("Missing required inputs") };
+  }
+
+  // Fetch the user record based on email
+  const { data: usersData, error: usersError } = await supabase
+    .from("users")
+    .select("user_id")
+    .eq("email", email)
+    .single();
+
+  if (usersError) {
+    return { data: null, error: Error(usersError.message) };
+  }
+
+  if (!usersData) {
+    return { data: null, error: Error("No user found with provided email") };
+  }
+
+  const userId = usersData.user_id;
+
+  // Check if user is already a member of the group
+  const { data: existingMembership, error: membershipError } = await supabase
+    .from("memberships")
+    .select("*")
+    .eq("group_id", groupId)
+    .eq("user_id", userId)
+    .single();
+
+  if (membershipError) {
+    return { data: null, error: Error(membershipError.message) };
+  }
+
+  if (existingMembership) {
+    return {
+      data: null,
+      error: Error("User is already a member of the group"),
+    };
+  }
+
+  // Add user to group with specified role
+  const { error: insertError } = await supabase
+    .from("memberships")
+    .insert([{ user_id: userId, group_id: groupId, role: "member" }]);
+
+  if (insertError) {
+    return { data: null, error: Error(insertError.message) };
+  }
+
+  return { data: "Successfully invited user to group", error: null };
+};
