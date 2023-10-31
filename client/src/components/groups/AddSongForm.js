@@ -17,7 +17,7 @@ const FormContainer = styled(Box)({
   margin: "auto",
 });
 
-const AddSongForm = ({ onAddSong, open, handleClose }) => {
+function AddSongForm({ onAddSong, open, handleClose }) {
   const [newSongName, setNewSongName] = useState("");
   const [newArtist, setNewArtist] = useState("");
 
@@ -40,17 +40,17 @@ const AddSongForm = ({ onAddSong, open, handleClose }) => {
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>Add a New Song</DialogTitle>
       <DialogContent>
-        <FormContainer component='form' onSubmit={handleSubmit}>
+        <FormContainer component="form" onSubmit={handleSubmit}>
           <TextField
-            label='Song Name'
-            variant='outlined'
+            label="Song Name"
+            variant="outlined"
             value={newSongName}
             onChange={(e) => setNewSongName(e.target.value)}
             fullWidth
           />
           <TextField
-            label='Artist'
-            variant='outlined'
+            label="Artist"
+            variant="outlined"
             value={newArtist}
             onChange={(e) => setNewArtist(e.target.value)}
             fullWidth
@@ -58,15 +58,20 @@ const AddSongForm = ({ onAddSong, open, handleClose }) => {
         </FormContainer>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color='primary'>
+        <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <Button type='submit' variant='contained' color='primary' onClick={handleSubmit}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+        >
           Add Song
         </Button>
       </DialogActions>
     </Dialog>
   );
-};
+}
 
 export default AddSongForm;

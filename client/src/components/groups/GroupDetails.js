@@ -1,21 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
-import { UserContext } from "@/context/UserContext";
-import { SongContext } from "@/context/SongContext";
-import { GroupContext } from "@/context/GroupContext";
 import { useRouter } from "next/router";
-
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
+import { GroupContext } from "@/context/GroupContext";
+import { SongContext } from "@/context/SongContext";
 import AddSongForm from "@/components/groups/AddSongForm";
 import FilterPanel from "@/components/groups/FilterPanel";
 import SongItem from "@/components/groups/SongItem";
 import Snackbar from "@/components/Snackbar";
 
-const GroupDetails = ({ groupId, onDelete }) => {
-  const { user } = useContext(UserContext);
+function GroupDetails({ groupId }) {
   const { songs, createSong, getSongsByGroupId } = useContext(SongContext);
   const { currentGroup, getGroup, deleteGroup } = useContext(GroupContext);
   const [error, setError] = useState(null);
@@ -30,16 +27,16 @@ const GroupDetails = ({ groupId, onDelete }) => {
     const fetchData = async () => {
       const { error: songError } = await getSongsByGroupId(groupId);
       if (songError) {
-        setError("Error fetching songs:" + songError.message);
+        setError(`Error fetching songs:${songError.message}`);
       }
 
       const { error: groupError } = await getGroup(groupId);
       if (groupError) {
-        setError("Error fetching current group:" + groupError.message);
+        setError(`Error fetching current group:${groupError.message}`);
       }
     };
     fetchData();
-  }, [groupId]);
+  }, [groupId, getSongsByGroupId, getGroup]);
 
   const [isAddSongModalOpen, setIsAddSongModalOpen] = useState(false); // New state for modal control
 
@@ -64,23 +61,27 @@ const GroupDetails = ({ groupId, onDelete }) => {
   };
 
   const handleDeleteSong = (songId) => {
-    setGroupSongs((prevSongs) => prevSongs.filter((song) => song.id !== songId));
+    // setGroupSongs((prevSongs) =>
+    //   prevSongs.filter((song) => song.id !== songId)
+    // );
   };
 
   const handleAddTag = (songId, newTag) => {
-    setGroupSongs((prevSongs) =>
-      prevSongs.map((song) =>
-        song.id === songId ? { ...song, tags: [...song.tags, newTag] } : song
-      )
-    );
+    // setGroupSongs((prevSongs) =>
+    //   prevSongs.map((song) =>
+    //     song.id === songId ? { ...song, tags: [...song.tags, newTag] } : song
+    //   )
+    // );
   };
 
   const handleDeleteTag = (songId, tag) => {
-    setGroupSongs((prevSongs) =>
-      prevSongs.map((song) =>
-        song.id === songId ? { ...song, tags: song.tags.filter((t) => t !== tag) } : song
-      )
-    );
+    // setGroupSongs((prevSongs) =>
+    //   prevSongs.map((song) =>
+    //     song.id === songId
+    //       ? { ...song, tags: song.tags.filter((t) => t !== tag) }
+    //       : song
+    //   )
+    // );
   };
 
   const handleAddFilter = (tag) => {
@@ -107,13 +108,17 @@ const GroupDetails = ({ groupId, onDelete }) => {
 
   // Filter the songs based on the selected tags
   const filteredSongs =
-    filterTags.length == 0
+    filterTags.length === 0
       ? songs
-      : songs.filter((song) => song.tags.some((tag) => filterTags.includes(tag)));
+      : songs.filter((song) =>
+          song.tags.some((tag) => filterTags.includes(tag))
+        );
 
   return (
     <Box sx={{ marginTop: 4 }}>
-      <Typography variant='h4'>{currentGroup ? currentGroup.group_name : "Loading..."}</Typography>
+      <Typography variant="h4">
+        {currentGroup ? currentGroup.group_name : "Loading..."}
+      </Typography>
       <FilterPanel
         addedTags={filterTags}
         onAddFilter={handleAddFilter}
@@ -131,16 +136,22 @@ const GroupDetails = ({ groupId, onDelete }) => {
         ))}
       </List>
 
-      <Box sx={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}>
+      <Box
+        sx={{ display: "flex", justifyContent: "space-between", marginTop: 2 }}
+      >
         <Button
-          variant='contained'
-          color='primary'
+          variant="contained"
+          color="primary"
           startIcon={<AddIcon />}
           onClick={handleOpenAddSongModal}
         >
           Add Song
         </Button>
-        <Button variant='outlined' color='primary' onClick={handleDeleteGroupClick}>
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={handleDeleteGroupClick}
+        >
           Delete Group
         </Button>
       </Box>
@@ -151,9 +162,9 @@ const GroupDetails = ({ groupId, onDelete }) => {
         handleClose={handleCloseAddSongModal}
       />
 
-      <Snackbar message={error} status='error' />
+      <Snackbar message={error} status="error" />
     </Box>
   );
-};
+}
 
 export default GroupDetails;

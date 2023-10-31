@@ -25,7 +25,7 @@ const InputContainer = styled("div")(({ theme }) => ({
   alignItems: "center",
 }));
 
-const FilterPanel = ({ addedTags, onAddFilter, onDeleteFilter }) => {
+function FilterPanel({ addedTags, onAddFilter, onDeleteFilter }) {
   const [inputTag, setInputTag] = useState("");
 
   const handleInputChange = (event) => {
@@ -48,19 +48,19 @@ const FilterPanel = ({ addedTags, onAddFilter, onDeleteFilter }) => {
       </TagContainer>
       <InputContainer>
         <TextField
-          variant='outlined'
-          size='small'
+          variant="outlined"
+          size="small"
           value={inputTag}
           onChange={handleInputChange}
-          placeholder='Enter tags to filter songs...'
+          placeholder="Enter tags to filter songs..."
           fullWidth
         />
-        <IconButton color='primary' aria-label='add' onClick={handleAddTag}>
+        <IconButton color="primary" aria-label="add" onClick={handleAddTag}>
           <AddIcon />
         </IconButton>
       </InputContainer>
     </FilterPanelContainer>
   );
-};
+}
 
 export default FilterPanel;

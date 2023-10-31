@@ -1,9 +1,15 @@
 import React, { createContext, useState } from "react";
-import { createGroup, getGroupsByUserId, getGroup, updateGroup, deleteGroup } from "@/functions"; 
+import {
+  createGroup,
+  getGroupsByUserId,
+  getGroup,
+  updateGroup,
+  deleteGroup,
+} from "@/functions";
 
 export const GroupContext = createContext();
 
-const GroupProvider = ({ children }) => {
+function GroupProvider({ children }) {
   const [groups, setGroups] = useState([]);
   const [currentGroup, setCurrentGroup] = useState(null);
 
@@ -29,7 +35,7 @@ const GroupProvider = ({ children }) => {
     if (!error) {
       setCurrentGroup(data);
       return { success: true };
-    } 
+    }
     return { success: false, error };
   };
 
@@ -46,7 +52,9 @@ const GroupProvider = ({ children }) => {
   const handleDeleteGroup = async (groupId) => {
     const { data, error } = await deleteGroup(groupId);
     if (!error) {
-      setGroups((prevGroups) => prevGroups.filter((group) => group.group_id !== groupId));
+      setGroups((prevGroups) =>
+        prevGroups.filter((group) => group.group_id !== groupId)
+      );
     }
     return { data, error };
   };
@@ -66,6 +74,6 @@ const GroupProvider = ({ children }) => {
       {children}
     </GroupContext.Provider>
   );
-};
+}
 
 export default GroupProvider;

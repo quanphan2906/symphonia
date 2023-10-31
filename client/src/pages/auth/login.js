@@ -5,9 +5,9 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
+import { useRouter } from "next/router";
 import Snackbar from "@/components/Snackbar";
 
-import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import { UserContext } from "@/context/UserContext";
 
@@ -48,49 +48,57 @@ function LoginPage() {
       <Header />
       <Grid
         container
-        justifyContent='center'
-        alignItems='center'
+        justifyContent="center"
+        alignItems="center"
         style={{ height: "calc(100vh - 64px)" }}
       >
         <Paper elevation={4} style={{ padding: "2rem" }}>
-          <Typography variant='h5' align='center' gutterBottom>
+          <Typography variant="h5" align="center" gutterBottom>
             Login
           </Typography>
           <form onSubmit={handleSubmit}>
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
-              label='Email Address'
-              name='email'
+              label="Email Address"
+              name="email"
               value={credentials.email}
               onChange={handleChange}
-              autoComplete='email'
+              autoComplete="email"
               autoFocus
             />
             <TextField
-              variant='outlined'
-              margin='normal'
+              variant="outlined"
+              margin="normal"
               fullWidth
-              label='Password'
-              name='password'
-              type='password'
+              label="Password"
+              name="password"
+              type="password"
               value={credentials.password}
               onChange={handleChange}
-              autoComplete='current-password'
+              autoComplete="current-password"
             />
             <Button
-              type='submit'
+              type="submit"
               fullWidth
-              variant='contained'
-              color='primary'
+              variant="contained"
+              color="primary"
               style={{ marginTop: "1rem" }}
             >
               Sign In
             </Button>
-            <Grid container justifyContent='flex-end' style={{ marginTop: "1rem" }}>
+            <Grid
+              container
+              justifyContent="flex-end"
+              style={{ marginTop: "1rem" }}
+            >
               <Grid item>
-                <Link onClick={handleSignupClick} component='button' variant='body2'>
+                <Link
+                  onClick={handleSignupClick}
+                  component="button"
+                  variant="body2"
+                >
                   Don't have an account? Sign Up
                 </Link>
               </Grid>
@@ -99,7 +107,7 @@ function LoginPage() {
         </Paper>
       </Grid>
 
-      <Snackbar message={error} status='error' />
+      <Snackbar message={error} status="error" />
     </div>
   );
 }

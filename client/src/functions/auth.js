@@ -6,17 +6,24 @@ export const validateToken = async (accessToken) => {
     return false;
   }
 
-  const { data: sessionWrapper, error: sessionError } = await supabase.auth.getSession();
+  const { data: sessionWrapper, error: sessionError } =
+    await supabase.auth.getSession();
 
   if (sessionError) {
     console.error("Cannot fetch session information from supabase");
     return false;
   }
 
-  return accessToken === sessionWrapper.session.access_token ? true : false;
+  return accessToken === sessionWrapper.session.access_token;
 };
 
-export const signup = async (email, password, firstName, lastName, userAvatar) => {
+export const signup = async (
+  email,
+  password,
+  firstName,
+  lastName,
+  userAvatar
+) => {
   // Validate input
   const info = [email, password, firstName, lastName];
   const text = ["email", "password", "first name", "second name"];
@@ -39,13 +46,18 @@ export const signup = async (email, password, firstName, lastName, userAvatar) =
   }
 
   const userId = auth.user.id;
-  const session = auth.session;
+  const { session } = auth;
 
   // Add user to database
   const { data: user, error: userError } = await supabase
     .from("users")
     .insert([
-      { user_id: userId, email, username: `${firstName} ${lastName}`, user_avatar: userAvatar },
+      {
+        user_id: userId,
+        email,
+        username: `${firstName} ${lastName}`,
+        user_avatar: userAvatar,
+      },
     ])
     .select()
     .limit(1)
@@ -68,20 +80,24 @@ export const login = async (email, password) => {
   }
 
   // Log user in with Supabase Auth
-  const { data: auth, error: authError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  const { data: auth, error: authError } =
+    await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
   if (authError) {
     return { data: null, error: Error(authError.message) };
   }
 
   const userId = auth.user.id;
-  const session = auth.session;
+  const { session } = auth;
 
   // Fetch user record from database
-  const { data: user, error: userError } = await getUser(session.access_token, userId);
+  const { data: user, error: userError } = await getUser(
+    session.access_token,
+    userId
+  );
 
   if (userError) {
     return { data: null, error: Error(userError.message) };
@@ -104,7 +120,8 @@ export const logout = async () => {
 
 export const getUser = async () => {
   // Get user id from session
-  const { data: sessionWrapper, error: sessionError } = await supabase.auth.getSession();
+  const { data: sessionWrapper, error: sessionError } =
+    await supabase.auth.getSession();
 
   if (sessionError) {
     return {
@@ -135,20 +152,20 @@ export const updateUser = async (email, password, username, userAvatar) => {
   const authObject = {}; // update to Supabase Auth
 
   if (email) {
-    updateObject["email"] = email;
-    authObject["email"] = email;
+    updateObject.email = email;
+    authObject.email = email;
   }
 
   if (password) {
-    authObject["password"] = password;
+    authObject.password = password;
   }
 
   if (username) {
-    updateObject["username"] = username;
+    updateObject.username = username;
   }
 
   if (userAvatar) {
-    updateObject["user_avatar"] = userAvatar;
+    updateObject.user_avatar = userAvatar;
   }
 
   // Update user info in Supabase Auth
@@ -160,7 +177,8 @@ export const updateUser = async (email, password, username, userAvatar) => {
 
   // Update user info in database
 
-  const { data: sessionWrapper, error: sessionError } = await supabase.auth.getSession();
+  const { data: sessionWrapper, error: sessionError } =
+    await supabase.auth.getSession();
 
   if (sessionError) {
     return {
@@ -206,7 +224,10 @@ export const deleteUser = async (accessToken, userId) => {
   }
 
   // Delete user from database
-  const { error: userError } = await supabase.from("users").delete().eq("user_id", userId);
+  const { error: userError } = await supabase
+    .from("users")
+    .delete()
+    .eq("user_id", userId);
 
   if (userError) {
     return { data: null, error: Error(userError.message) };

@@ -13,8 +13,8 @@ import Button from "@mui/material/Button";
 import Link from "@mui/material/Link";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { UserContext } from "@/context/UserContext";
 import { useRouter } from "next/router";
+import { UserContext } from "@/context/UserContext";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -88,16 +88,20 @@ export default function Header() {
   };
 
   return (
-    <AppBar position='static'>
+    <AppBar position="static">
       <Toolbar>
         <Link
           onClick={handleHomeClick}
-          component='button'
-          color='inherit'
-          underline='none'
-          sx={{ display: { xs: "none", sm: "block" }, flexGrow: 1, textAlign: "left" }}
+          component="button"
+          color="inherit"
+          underline="none"
+          sx={{
+            display: { xs: "none", sm: "block" },
+            flexGrow: 1,
+            textAlign: "left",
+          }}
         >
-          <Typography variant='h6' noWrap>
+          <Typography variant="h6" noWrap>
             Connectify
           </Typography>
         </Link>
@@ -105,28 +109,35 @@ export default function Header() {
           <SearchIconWrapper>
             <SearchIcon />
           </SearchIconWrapper>
-          <StyledInputBase placeholder='Search…' inputProps={{ "aria-label": "search" }} />
+          <StyledInputBase
+            placeholder="Search…"
+            inputProps={{ "aria-label": "search" }}
+          />
         </Search>
         {user ? (
           <>
-            <IconButton color='inherit'>
-              <Badge badgeContent={4} color='error'>
+            <IconButton color="inherit">
+              <Badge badgeContent={4} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton color='inherit' onClick={handleMenuOpen}>
+            <IconButton color="inherit" onClick={handleMenuOpen}>
               <AccountCircle />
             </IconButton>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
+            <Menu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </>
         ) : (
           <>
-            <Button color='inherit' onClick={handleLoginClick}>
+            <Button color="inherit" onClick={handleLoginClick}>
               Login
             </Button>
-            <Button color='inherit' onClick={handleSignupClick}>
+            <Button color="inherit" onClick={handleSignupClick}>
               Sign Up
             </Button>
           </>

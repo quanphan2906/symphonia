@@ -52,7 +52,7 @@ const GroupButton = styled(IconButton)({
 });
 
 export default function GroupList() {
-  const { groups, createGroup, getGroupsByUserId } = useContext(GroupContext); 
+  const { groups, createGroup, getGroupsByUserId } = useContext(GroupContext);
   const { user } = useContext(UserContext);
   const router = useRouter();
 
@@ -66,12 +66,12 @@ export default function GroupList() {
     const fetchGroups = async () => {
       const { error } = await getGroupsByUserId(user.user_id);
       if (error) {
-        setError("Error fetching groups: " + error.message);
+        setError(`Error fetching groups: ${error.message}`);
       }
     };
 
     fetchGroups();
-  }, [user.user_id]);
+  }, [user.user_id, getGroupsByUserId]);
 
   const handleGroupClick = (groupId) => {
     router.push(`/groups/${groupId}`);
@@ -94,7 +94,7 @@ export default function GroupList() {
     if (!error && data) {
       setSuccess("Group created successfully");
     } else {
-      setError("Error creating group:" + error.message);
+      setError(`Error creating group:${error.message}`);
     }
     setIsDialogOpen(false);
   };
@@ -102,18 +102,24 @@ export default function GroupList() {
   return (
     <GroupListContainer>
       {groups.map((group) => (
-        <GroupAvatar key={group.group_id} onClick={() => handleGroupClick(group.group_id)}>
+        <GroupAvatar
+          key={group.group_id}
+          onClick={() => handleGroupClick(group.group_id)}
+        >
           {group.group_name.charAt(0).toUpperCase()}
         </GroupAvatar>
       ))}
       <ButtonContainer>
-        <Tooltip title='Add Group' arrow placement='left'>
-          <GroupButton onClick={handleAddGroupClick} variant='primaryLight'>
+        <Tooltip title="Add Group" arrow placement="left">
+          <GroupButton onClick={handleAddGroupClick} variant="primaryLight">
             <AddIcon />
           </GroupButton>
         </Tooltip>
-        <Tooltip title='Discover Public Groups' arrow placement='left'>
-          <GroupButton onClick={handleDiscoverGroupsClick} variant='primaryLight'>
+        <Tooltip title="Discover Public Groups" arrow placement="left">
+          <GroupButton
+            onClick={handleDiscoverGroupsClick}
+            variant="primaryLight"
+          >
             <GroupIcon />
           </GroupButton>
         </Tooltip>
@@ -124,35 +130,39 @@ export default function GroupList() {
         <DialogContent>
           <TextField
             autoFocus
-            margin='dense'
-            label='Group Name'
-            type='text'
+            margin="dense"
+            label="Group Name"
+            type="text"
             fullWidth
             value={groupName}
             onChange={(e) => setGroupName(e.target.value)}
           />
           <TextField
-            margin='dense'
-            label='Initial Group Members'
-            type='text'
+            margin="dense"
+            label="Initial Group Members"
+            type="text"
             fullWidth
-            placeholder='Enter email addresses separated by commas'
+            placeholder="Enter email addresses separated by commas"
             value={groupMembers}
             onChange={(e) => setGroupMembers(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDialogClose} color='primary'>
+          <Button onClick={handleDialogClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleDialogSubmit} variant='contained' color='primary'>
+          <Button
+            onClick={handleDialogSubmit}
+            variant="contained"
+            color="primary"
+          >
             Create
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Snackbar message={error} status='error' />
-      <Snackbar message={success} status='success' />
+      <Snackbar message={error} status="error" />
+      <Snackbar message={success} status="success" />
     </GroupListContainer>
   );
 }
