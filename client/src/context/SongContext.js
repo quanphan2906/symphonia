@@ -1,5 +1,10 @@
 import React, { createContext, useState } from "react";
-import { createSong, getSongsByGroupId, updateSong } from "@/functions";
+import {
+  createSong,
+  getSongsByGroupId,
+  updateSong,
+  deleteSong,
+} from "@/functions";
 
 export const SongContext = createContext();
 
@@ -35,6 +40,18 @@ function SongProvider({ children }) {
     return { success: false, error };
   };
 
+  const handleDeleteSong = async (songId) => {
+    const { error } = await deleteSong(songId);
+
+    if (!error) {
+      setSongs((prevSongs) =>
+        prevSongs.filter((song) => song.song_id !== songId)
+      );
+      return { success: true };
+    }
+    return { success: false, error };
+  };
+
   return (
     <SongContext.Provider
       value={{
@@ -42,6 +59,7 @@ function SongProvider({ children }) {
         createSong: handleCreateSong,
         getSongsByGroupId: handleGetSongsByGroupId,
         updateSong: handleUpdateSong,
+        deleteSong: handleDeleteSong,
       }}
     >
       {children}

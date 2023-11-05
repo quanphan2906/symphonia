@@ -13,15 +13,15 @@ import SongItem from "@/components/groups/SongItem";
 import Snackbar from "@/components/Snackbar";
 
 function GroupDetails({ groupId }) {
-  const { songs, createSong, getSongsByGroupId } = useContext(SongContext);
+  const { songs, createSong, getSongsByGroupId, deleteSong } =
+    useContext(SongContext);
   const { currentGroup, getGroup, deleteGroup } = useContext(GroupContext);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const router = useRouter();
 
   const [filterTags, setFilterTags] = useState([]);
-
-  // TODO: In all event handlers, need to update database
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,9 +36,9 @@ function GroupDetails({ groupId }) {
       }
     };
     fetchData();
-  }, [groupId, getSongsByGroupId, getGroup]);
+  }, [groupId]);
 
-  const [isAddSongModalOpen, setIsAddSongModalOpen] = useState(false); // New state for modal control
+  const [isAddSongModalOpen, setIsAddSongModalOpen] = useState(false);
 
   const handleOpenAddSongModal = () => {
     setIsAddSongModalOpen(true);
@@ -55,33 +55,22 @@ function GroupDetails({ groupId }) {
       newSong.artist,
       newSong.coverImage
     );
-    if (!success) {
-      console.error(error.message); // Handle error (e.g., show an error message)
+
+    if (success) {
+      setSuccess("Song added successfully!");
+    } else {
+      setError(error.message);
     }
   };
 
-  const handleDeleteSong = (songId) => {
-    // setGroupSongs((prevSongs) =>
-    //   prevSongs.filter((song) => song.id !== songId)
-    // );
-  };
+  const handleDeleteSong = async (songId) => {
+    const { success, error } = await deleteSong(songId);
 
-  const handleAddTag = (songId, newTag) => {
-    // setGroupSongs((prevSongs) =>
-    //   prevSongs.map((song) =>
-    //     song.id === songId ? { ...song, tags: [...song.tags, newTag] } : song
-    //   )
-    // );
-  };
-
-  const handleDeleteTag = (songId, tag) => {
-    // setGroupSongs((prevSongs) =>
-    //   prevSongs.map((song) =>
-    //     song.id === songId
-    //       ? { ...song, tags: song.tags.filter((t) => t !== tag) }
-    //       : song
-    //   )
-    // );
+    if (success) {
+      setSuccess("Song deleted successfully!");
+    } else {
+      setError(error.message);
+    }
   };
 
   const handleAddFilter = (tag) => {
@@ -92,11 +81,13 @@ function GroupDetails({ groupId }) {
     setFilterTags((tags) => tags.filter((t) => t !== tag));
   };
 
-  const handleDeleteGroupClick = () => {
-    const { error } = deleteGroup(groupId);
+  const handleDeleteGroupClick = async () => {
+    const { error } = await deleteGroup(groupId);
 
     if (!error) {
       router.push("/"); // Redirect to groups page on successful deletion
+      // TODO: Solve this error (Error: Abort fetching component for route: "/")
+      setSuccess("Group deleted successfully!");
     } else {
       setError(error.message);
     }
@@ -106,18 +97,22 @@ function GroupDetails({ groupId }) {
   // 	updateGroupName(groupId, newGroupName, user.userId); // TODO: update group data
   // };
 
-  // Filter the songs based on the selected tags
-  const filteredSongs =
-    filterTags.length === 0
-      ? songs
-      : songs.filter((song) =>
-          song.tags.some((tag) => filterTags.includes(tag))
-        );
+  // TODO: Filter the songs based on the selected tags
+  // the tags aren't stored in songs
+
+  const filteredSongs = songs;
+  // const filteredSongs =
+  //   filterTags.length === 0
+  //     ? songs
+  //     : songs.filter((song) =>
+  //         song.tags.some((tag) => filterTags.includes(tag))
+  //       );
 
   return (
     <Box sx={{ marginTop: 4 }}>
       <Typography variant="h4">
         {currentGroup ? currentGroup.group_name : "Loading..."}
+        {/* TODO: Have something for loading */}
       </Typography>
       <FilterPanel
         addedTags={filterTags}
@@ -130,8 +125,6 @@ function GroupDetails({ groupId }) {
             key={song.song_id}
             song={song}
             onDelete={handleDeleteSong}
-            onAddTag={handleAddTag}
-            onDeleteTag={handleDeleteTag}
           />
         ))}
       </List>
@@ -162,7 +155,8 @@ function GroupDetails({ groupId }) {
         handleClose={handleCloseAddSongModal}
       />
 
-      <Snackbar message={error} status="error" />
+      <Snackbar message={error} setMessage={setError} status="error" />
+      <Snackbar message={success} setMessage={setSuccess} status="success" />
     </Box>
   );
 }

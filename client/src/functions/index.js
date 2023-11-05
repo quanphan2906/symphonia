@@ -10,4 +10,6 @@ export {
 
 export { getMembers, joinGroup } from "./member";
 
-export { createSong, getSongsByGroupId, updateSong } from "./songs";
+export { createSong, getSongsByGroupId, updateSong, deleteSong } from "./songs";
+
+export { addSongTag, removeSongTag, getSongTags } from "./songTags";

@@ -161,8 +161,8 @@ export default function GroupList() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar message={error} status="error" />
-      <Snackbar message={success} status="success" />
+      <Snackbar message={error} setMessage={setError} status="error" />
+      <Snackbar message={success} setMessage={setSuccess} status="success" />
     </GroupListContainer>
   );
 }
