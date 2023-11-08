@@ -17,5 +17,11 @@
     "sourceType": "module"
   },
   "plugins": ["react", "prettier"],
-  "rules": { "no-unused-vars": "warn" }
+  "rules": { "no-unused-vars": "warn" },
+  "prettier/prettier": [
+    "error",
+    {
+      "endOfLine": "auto"
+    }
+  ]
 }
