@@ -3,9 +3,7 @@ name: Jest Automatic Testing
 on: pull_request_target
 
 jobs:
-	# ID of the job
 	run-jest-tests:
-		# Name of the job as it will be displayed in GitHub
 		name: Jest Tests
 		runs-on: ubuntu-latest
 
