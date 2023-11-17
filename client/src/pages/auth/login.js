@@ -107,7 +107,7 @@ function LoginPage() {
         </Paper>
       </Grid>
 
-      <Snackbar message={error} status="error" />
+      <Snackbar message={error} setMessage={setError} status="error" />
     </div>
   );
 }

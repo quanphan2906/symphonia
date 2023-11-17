@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 
-function CustomSnackbar({ message, status }) {
+function CustomSnackbar({ message, setMessage, status }) {
   const [open, setOpen] = useState(Boolean(message));
 
   useEffect(() => {
@@ -12,6 +12,7 @@ function CustomSnackbar({ message, status }) {
   }, [message]);
 
   const handleClose = (event, reason) => {
+    setMessage(null);
     if (reason === "clickaway") {
       return;
     }

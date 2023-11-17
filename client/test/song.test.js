@@ -5,26 +5,30 @@ import {
   signup,
   createGroup,
   logout,
+  searchSongsByName,
 } from "../src/functions";
-import { removeAllGroups, removeAllUsers, removeAllSongs } from "./helper";
+import { removeTestGroups, removeTestUsers, removeTestSongs } from "./helper";
 
 describe("Songs management test suite", () => {
   let groupId;
+  let userIds;
 
   beforeAll(async () => {
-    await removeAllSongs();
-    await removeAllGroups();
-    await removeAllUsers();
-
     const fakeEmail = "testuser@example.com";
     const fakePassword = "password";
     const fakeUsername = "testuser";
     const fakeUserAvatar = "userAvatar";
-    await signup(fakeEmail, fakePassword, fakeUsername, fakeUserAvatar);
+    userIds = [];
+    const { data } = await signup(
+      fakeEmail,
+      fakePassword,
+      fakeUsername,
+      fakeUserAvatar
+    );
+    userIds.push(data.user.user_id);
 
     const avatar = "groupAvatar";
     const groupName = "New Group";
-
     const {
       data: { group },
     } = await createGroup(groupName, avatar);
@@ -34,9 +38,9 @@ describe("Songs management test suite", () => {
 
   afterAll(async () => {
     await logout();
-    await removeAllSongs();
-    await removeAllGroups();
-    await removeAllUsers();
+    await removeTestSongs(groupId);
+    await removeTestGroups([groupId]);
+    await removeTestUsers(userIds);
   }, 15000);
 
   it("4.1 expect errors when no author present", async () => {
@@ -142,5 +146,42 @@ describe("Songs management test suite", () => {
     expect(data.name).toBe(name);
     expect(data.author).toBe(author);
     expect(data.cover_image).toBe(coverImage);
+  });
+
+  it("4.8 should return songs that match the search term", async () => {
+    // Insert multiple songs into the database
+    const songsToCreate = [
+      {
+        name: "Ephemeral Dawn",
+        author: "Celestial Aeon",
+        coverImage: "cover1.jpg",
+      },
+      {
+        name: "Dawning Light",
+        author: "Luminous Harmony",
+        coverImage: "cover2.jpg",
+      },
+      {
+        name: "Twilight Serenade",
+        author: "Nightfall Melody",
+        coverImage: "cover3.jpg",
+      },
+    ];
+
+    for (const song of songsToCreate) {
+      await createSong(groupId, song.name, song.author, song.coverImage);
+    }
+
+    // Search term should match the first two songs
+    const searchTerm = "Dawn";
+    const { data, error } = await searchSongsByName(groupId, searchTerm);
+
+    expect(error).toBeNull();
+    expect(data).not.toBeNull();
+    expect(data.length).toBe(2);
+    expect(data.some((song) => song.name.includes("Ephemeral Dawn"))).toBe(
+      true
+    );
+    expect(data.some((song) => song.name.includes("Dawning Light"))).toBe(true);
   });
 });

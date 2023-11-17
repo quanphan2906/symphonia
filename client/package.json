@@ -1,5 +1,5 @@
 {
-  "name": "client",
+  "name": "connectify",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,7 @@
     "start": "next start",
     "test": "jest --runInBand",
     "lint": "eslint . --fix",
-    "format": "prettier . --write",
-    "prepare": "husky install"
+    "format": "prettier . --write"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { styled } from "@mui/system";
 import Chip from "@mui/material/Chip";
 import AddIcon from "@mui/icons-material/Add";
@@ -8,6 +8,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from "@mui/material/ListItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { SongContext } from "@/context/SongContext";
+import Snackbar from "@/components/Snackbar";
 
 const SongListItem = styled(ListItem)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -17,13 +19,26 @@ const SongListItem = styled(ListItem)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
 }));
 
-function SongItem({ song, onDelete, onAddTag, onDeleteTag }) {
+function SongItem({ song, onDelete }) {
   const [newTag, setNewTag] = useState("");
+  const [error, setError] = useState(null);
+  const { addSongTag, removeSongTag } = useContext(SongContext);
 
-  const handleAddTag = () => {
+  const handleAddTag = async () => {
     if (newTag.trim()) {
-      onAddTag(song.id, newTag.trim());
+      const { success, error } = await addSongTag(song.song_id, newTag);
+      if (!success) {
+        setError(error.message); // Handle error (e.g., show an error message)
+      }
+
       setNewTag("");
+    }
+  };
+
+  const handleDeleteTag = async (songId, tag) => {
+    const { success, error } = await removeSongTag(songId, tag);
+    if (!success) {
+      setError(error.message); // Handle error (e.g., show an error message)
     }
   };
 
@@ -34,11 +49,11 @@ function SongItem({ song, onDelete, onAddTag, onDeleteTag }) {
           {`${song.name} - ${song.author}`}
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          {song.tags?.map((tag, index) => (
+          {song?.tags?.map((tag, index) => (
             <Chip
               key={index}
-              label={tag}
-              onDelete={() => onDeleteTag(song.id, tag)}
+              label={tag.tag}
+              onDelete={() => handleDeleteTag(song.song_id, tag.tag)}
             />
           ))}
         </Box>
@@ -49,8 +64,8 @@ function SongItem({ song, onDelete, onAddTag, onDeleteTag }) {
         </IconButton>
         <TextField
           label="Tag"
-          variant="outlined"
           size="small"
+          variant="outlined"
           value={newTag}
           onChange={(e) => setNewTag(e.target.value)}
         />
@@ -58,10 +73,11 @@ function SongItem({ song, onDelete, onAddTag, onDeleteTag }) {
       <IconButton
         edge="end"
         aria-label="Delete song"
-        onClick={() => onDelete(song.id)}
+        onClick={() => onDelete(song.song_id)}
       >
         <DeleteIcon />
       </IconButton>
+      <Snackbar message={error} setMessage={setError} status="error" />
     </SongListItem>
   );
 }

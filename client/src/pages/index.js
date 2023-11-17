@@ -1,21 +1,21 @@
 import React, { useContext } from "react";
 import { UserContext } from "@/context/UserContext";
 import Header from "@/components/Header";
-import GroupList from "@/components/groups/GroupList"; // Import GroupList component
+import GroupList from "@/components/groups/GroupList";
+import Home from "@/components/Home";
 
-function Home() {
+function HomePage() {
   const { user } = useContext(UserContext);
 
   return (
     <div>
       <Header />
-      {user && ( // Render GroupList only if the user is logged in
-        <div style={{ display: "flex" }}>
-          <GroupList />
-        </div>
-      )}
+      <div style={{ display: "flex" }}>
+        {user && <GroupList />}
+        <Home />
+      </div>
     </div>
   );
 }
 
-export default Home;
+export default HomePage;

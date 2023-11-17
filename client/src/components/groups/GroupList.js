@@ -71,7 +71,7 @@ export default function GroupList() {
     };
 
     fetchGroups();
-  }, [user.user_id, getGroupsByUserId]);
+  }, [user.user_id]);
 
   const handleGroupClick = (groupId) => {
     router.push(`/groups/${groupId}`);
@@ -165,8 +165,8 @@ export default function GroupList() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar message={error} status="error" />
-      <Snackbar message={success} status="success" />
+      <Snackbar message={error} setMessage={setError} status="error" />
+      <Snackbar message={success} setMessage={setSuccess} status="success" />
     </GroupListContainer>
   );
 }
