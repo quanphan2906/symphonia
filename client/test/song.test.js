@@ -5,6 +5,7 @@ import {
   signup,
   createGroup,
   logout,
+  searchSongsByName,
 } from "../src/functions";
 import { removeTestGroups, removeTestUsers, removeTestSongs } from "./helper";
 
@@ -145,5 +146,42 @@ describe("Songs management test suite", () => {
     expect(data.name).toBe(name);
     expect(data.author).toBe(author);
     expect(data.cover_image).toBe(coverImage);
+  });
+
+  it("4.8 should return songs that match the search term", async () => {
+    // Insert multiple songs into the database
+    const songsToCreate = [
+      {
+        name: "Ephemeral Dawn",
+        author: "Celestial Aeon",
+        coverImage: "cover1.jpg",
+      },
+      {
+        name: "Dawning Light",
+        author: "Luminous Harmony",
+        coverImage: "cover2.jpg",
+      },
+      {
+        name: "Twilight Serenade",
+        author: "Nightfall Melody",
+        coverImage: "cover3.jpg",
+      },
+    ];
+
+    for (const song of songsToCreate) {
+      await createSong(groupId, song.name, song.author, song.coverImage);
+    }
+
+    // Search term should match the first two songs
+    const searchTerm = "Dawn";
+    const { data, error } = await searchSongsByName(groupId, searchTerm);
+
+    expect(error).toBeNull();
+    expect(data).not.toBeNull();
+    expect(data.length).toBe(2);
+    expect(data.some((song) => song.name.includes("Ephemeral Dawn"))).toBe(
+      true
+    );
+    expect(data.some((song) => song.name.includes("Dawning Light"))).toBe(true);
   });
 });
