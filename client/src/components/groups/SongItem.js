@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { styled } from "@mui/system";
 import Chip from "@mui/material/Chip";
 import AddIcon from "@mui/icons-material/Add";
@@ -8,7 +8,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from "@mui/material/ListItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { SongTagContext } from "@/context/SongTagContext";
+import { SongContext } from "@/context/SongContext";
 import Snackbar from "@/components/Snackbar";
 
 const SongListItem = styled(ListItem)(({ theme }) => ({
@@ -20,21 +20,9 @@ const SongListItem = styled(ListItem)(({ theme }) => ({
 }));
 
 function SongItem({ song, onDelete }) {
-  const { songTags, getSongTags, addSongTag, removeSongTag } =
-    useContext(SongTagContext);
-
   const [newTag, setNewTag] = useState("");
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { success, error } = await getSongTags(song.song_id);
-      if (!success) {
-        setError(`Error fetching tags: ${error.message}`);
-      }
-    };
-    fetchData();
-  }, [song.song_id]);
+  const { addSongTag, removeSongTag } = useContext(SongContext);
 
   const handleAddTag = async () => {
     if (newTag.trim()) {
@@ -61,7 +49,7 @@ function SongItem({ song, onDelete }) {
           {`${song.name} - ${song.author}`}
         </Typography>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          {songTags?.map((tag, index) => (
+          {song?.tags?.map((tag, index) => (
             <Chip
               key={index}
               label={tag.tag}

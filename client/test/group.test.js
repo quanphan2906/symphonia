@@ -8,19 +8,19 @@ import {
   signup,
 } from "../src/functions";
 
-import { removeAllGroups, removeAllUsers } from "./helper";
+import { removeTestUsers, removeTestGroups } from "./helper";
 
 describe("Group Management Functions", () => {
   let userId;
+  let groupIds;
 
   beforeAll(async () => {
-    await removeAllUsers();
-    await removeAllGroups();
     const fakeEmail = "testuser@example.com";
     const fakePassword = "password";
     const fakeFirstName = "test";
     const fakeLastName = "user";
     const fakeUserAvatar = "userAvatar";
+    groupIds = [];
     const { data } = await signup(
       fakeEmail,
       fakePassword,
@@ -33,9 +33,9 @@ describe("Group Management Functions", () => {
   }, 10000);
 
   afterAll(async () => {
+    await removeTestGroups(groupIds);
+    await removeTestUsers([userId]);
     await logout();
-    await removeAllUsers();
-    await removeAllGroups();
   }, 10000);
 
   it("3.1 should return an error since group_name is empty", async () => {
@@ -52,6 +52,7 @@ describe("Group Management Functions", () => {
     const groupName = "New Group";
 
     const { data, error } = await createGroup(groupName, avatar);
+    groupIds.push(data.group.group_id);
     expect(error).toBeNull();
     expect(data).toBeTruthy();
     expect(data.group.group_name).toBe(groupName);
@@ -71,8 +72,8 @@ describe("Group Management Functions", () => {
     const avatar = "groupAvatar";
     const groupName = "Different group";
 
-    await createGroup(groupName, avatar);
-
+    const { data: groupData } = await createGroup(groupName, avatar);
+    groupIds.push(groupData.group.group_id);
     const { data, error } = await getGroupsByUserId(userId);
     expect(error).toBeNull();
     expect(Array.isArray(data)).toBe(true);
@@ -84,6 +85,7 @@ describe("Group Management Functions", () => {
     const groupName = "Different group";
 
     const { data } = await createGroup(groupName, avatar);
+    groupIds.push(data.group.group_id);
     const { data: group, error } = await getGroup(data.group.group_id);
     expect(error).toBeNull();
     expect(group).toBeTruthy();
@@ -97,6 +99,7 @@ describe("Group Management Functions", () => {
     const {
       data: { group },
     } = await createGroup(groupName, avatar);
+    groupIds.push(group.group_id);
 
     avatar = "newGroupAvatar";
     groupName = "Updated Group";

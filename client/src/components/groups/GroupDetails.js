@@ -97,16 +97,12 @@ function GroupDetails({ groupId }) {
   // 	updateGroupName(groupId, newGroupName, user.userId); // TODO: update group data
   // };
 
-  // TODO: Filter the songs based on the selected tags
-  // the tags aren't stored in songs
-
-  const filteredSongs = songs;
-  // const filteredSongs =
-  //   filterTags.length === 0
-  //     ? songs
-  //     : songs.filter((song) =>
-  //         song.tags.some((tag) => filterTags.includes(tag))
-  //       );
+  const filteredSongs =
+    filterTags.length === 0
+      ? songs
+      : songs.filter((song) =>
+          song.tags.some((tag) => filterTags.includes(tag.tag))
+        );
 
   return (
     <Box sx={{ marginTop: 4 }}>

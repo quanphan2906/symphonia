@@ -6,7 +6,7 @@ import {
   logout,
   createGroup,
 } from "../src/functions";
-import { removeAllGroups, removeAllUsers } from "./helper";
+import { removeTestGroups, removeTestUsers } from "./helper";
 
 describe("Group Management Functions", () => {
   let groupId;
@@ -14,11 +14,9 @@ describe("Group Management Functions", () => {
   let testPasswords;
   let testFirstNames;
   let testLastNames;
+  let testUserIds;
 
   beforeAll(async () => {
-    await removeAllUsers();
-    await removeAllGroups();
-
     testEmails = [
       "user1@example.com",
       "user2@example.com",
@@ -27,14 +25,16 @@ describe("Group Management Functions", () => {
     testPasswords = ["password1", "password2", "password3"];
     testFirstNames = ["user1", "user2", "user3"];
     testLastNames = ["user1", "user2", "user3"];
+    testUserIds = [];
 
     for (let i = 0; i < 3; i++) {
-      await signup(
+      const { data } = await signup(
         testEmails[i],
         testPasswords[i],
         testFirstNames[i],
         testLastNames[i]
       );
+      testUserIds.push(data.user.user_id);
     }
 
     await login(testEmails[0], testPasswords[0]);
@@ -47,8 +47,8 @@ describe("Group Management Functions", () => {
 
   afterAll(async () => {
     await logout();
-    await removeAllUsers();
-    await removeAllGroups();
+    await removeTestGroups([groupId]);
+    await removeTestUsers(testUserIds);
   }, 20000);
 
   it("should add the user into group", async () => {

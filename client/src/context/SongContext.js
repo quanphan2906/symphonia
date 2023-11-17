@@ -4,6 +4,9 @@ import {
   getSongsByGroupId,
   updateSong,
   deleteSong,
+  getSongTags,
+  removeSongTag,
+  addSongTag,
 } from "@/functions";
 
 export const SongContext = createContext();
@@ -22,11 +25,23 @@ function SongProvider({ children }) {
 
   const handleGetSongsByGroupId = async (groupId) => {
     const { data, error } = await getSongsByGroupId(groupId);
-    if (data) {
-      setSongs(data);
-      return { success: true };
+    if (!data) {
+      return { success: false, error };
     }
-    return { success: false, error };
+
+    try {
+      const updatedSongsWithTags = await Promise.all(
+        data.map(async (song) => {
+          const { data: tagsData } = await getSongTags(song.song_id);
+          return { ...song, tags: tagsData || [] };
+        })
+      );
+      setSongs(updatedSongsWithTags);
+      return { success: true };
+    } catch (tagError) {
+      console.error("Error fetching tags:", tagError);
+      return { success: false, error: tagError };
+    }
   };
 
   const handleUpdateSong = async (songId, name, author, coverImage) => {
@@ -52,6 +67,40 @@ function SongProvider({ children }) {
     return { success: false, error };
   };
 
+  // Function to add a tag to a song
+  const handleAddSongTag = async (songId, tag) => {
+    const { data, error } = await addSongTag(songId, tag);
+    if (!data) {
+      return { success: false, error };
+    }
+
+    // Update the songs state to include the new tag
+    setSongs((prevSongs) =>
+      prevSongs.map((song) =>
+        song.song_id === songId ? { ...song, tags: [...song.tags, data] } : song
+      )
+    );
+    return { success: true };
+  };
+
+  // Function to remove a tag from a song
+  const handleRemoveSongTag = async (songId, tag) => {
+    const { error } = await removeSongTag(songId, tag);
+    if (error) {
+      return { success: false, error };
+    }
+
+    // Update the songs state to remove the tag
+    setSongs((prevSongs) =>
+      prevSongs.map((song) =>
+        song.song_id === songId
+          ? { ...song, tags: song.tags.filter((t) => t.tag !== tag) }
+          : song
+      )
+    );
+    return { success: true };
+  };
+
   return (
     <SongContext.Provider
       value={{
@@ -60,6 +109,8 @@ function SongProvider({ children }) {
         getSongsByGroupId: handleGetSongsByGroupId,
         updateSong: handleUpdateSong,
         deleteSong: handleDeleteSong,
+        addSongTag: handleAddSongTag,
+        removeSongTag: handleRemoveSongTag,
       }}
     >
       {children}
