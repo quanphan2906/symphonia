@@ -68,6 +68,30 @@ export const inviteMember = async (groupId, email, role) => {
     return { data: null, error: Error("Missing required inputs") };
   }
 
+  // Fetch user id and role from session
+  const { data: sessionWrapper, error: sessionError } =
+    await supabase.auth.getSession();
+  if (sessionError) {
+    return {
+      data: null,
+      error: Error("Cannot fetch session:", sessionError.message),
+    };
+  }
+
+  const currentUserId = sessionWrapper.session.user.id;
+
+  // Check if the current user is the admin of the group
+  const { data: membershipData, error: adminCheckError } = await supabase
+    .from("memberships")
+    .select("role")
+    .eq("group_id", groupId)
+    .eq("user_id", currentUserId)
+    .single();
+
+  if (adminCheckError || !membershipData || membershipData.role !== "admin") {
+    return { data: null, error: Error("Only group admins can invite members") };
+  }
+
   // Fetch the user record based on email
   const { data: usersData, error: usersError } = await supabase
     .from("users")
@@ -78,7 +102,7 @@ export const inviteMember = async (groupId, email, role) => {
   if (!usersData) {
     return { data: null, error: Error("No user found with provided email") };
   }
-  
+
   if (usersError) {
     return { data: null, error: Error(usersError.message) };
   }
