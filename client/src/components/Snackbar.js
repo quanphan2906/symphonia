@@ -12,11 +12,11 @@ function CustomSnackbar({ message, setMessage, status }) {
   }, [message]);
 
   const handleClose = (event, reason) => {
-    setMessage(null);
     if (reason === "clickaway") {
       return;
     }
     setOpen(false);
+    setMessage(null);
   };
 
   return (

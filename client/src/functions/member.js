@@ -53,7 +53,7 @@ export const joinGroup = async (groupId) => {
   // Add user to group
   const { error: membershipError } = await supabase
     .from("memberships")
-    .insert({ user_id: userId, group_id: groupId, role: "member" });
+    .insert({ user_id: userId, group_id: groupId, role });
 
   if (membershipError) {
     return { data: null, error: Error(membershipError.message) };
@@ -75,14 +75,13 @@ export const inviteMember = async (groupId, email, role) => {
     .eq("email", email)
     .single();
 
-  if (usersError) {
-    return { data: null, error: Error(usersError.message) };
-  }
-
   if (!usersData) {
     return { data: null, error: Error("No user found with provided email") };
   }
-
+  
+  if (usersError) {
+    return { data: null, error: Error(usersError.message) };
+  }
   const userId = usersData.user_id;
 
   // Check if user is already a member of the group
@@ -92,10 +91,6 @@ export const inviteMember = async (groupId, email, role) => {
     .eq("group_id", groupId)
     .eq("user_id", userId)
     .single();
-
-  if (membershipError) {
-    return { data: null, error: Error(membershipError.message) };
-  }
 
   if (existingMembership) {
     return {

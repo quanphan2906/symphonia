@@ -22,13 +22,16 @@ const SongListItem = styled(ListItem)(({ theme }) => ({
 function SongItem({ song, onDelete }) {
   const [newTag, setNewTag] = useState("");
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const { addSongTag, removeSongTag } = useContext(SongContext);
 
   const handleAddTag = async () => {
     if (newTag.trim()) {
-      const { success, error } = await addSongTag(song.song_id, newTag);
-      if (!success) {
+      const { error } = await addSongTag(song.song_id, newTag);
+      if (error) {
         setError(error.message); // Handle error (e.g., show an error message)
+      } else {
+        setSuccess("Tag added successfully!");
       }
 
       setNewTag("");
@@ -36,9 +39,11 @@ function SongItem({ song, onDelete }) {
   };
 
   const handleDeleteTag = async (songId, tag) => {
-    const { success, error } = await removeSongTag(songId, tag);
-    if (!success) {
+    const { error } = await removeSongTag(songId, tag);
+    if (error) {
       setError(error.message); // Handle error (e.g., show an error message)
+    } else {
+      setSuccess("Tag removed successfully!");
     }
   };
 
@@ -78,6 +83,7 @@ function SongItem({ song, onDelete }) {
         <DeleteIcon />
       </IconButton>
       <Snackbar message={error} setMessage={setError} status="error" />
+      <Snackbar message={success} setMessage={setSuccess} status="success" />
     </SongListItem>
   );
 }

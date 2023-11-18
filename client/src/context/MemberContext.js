@@ -6,7 +6,6 @@ export const MemberContext = createContext();
 function MemberProvider({ children }) {
   const [members, setMembers] = useState([]);
 
-  console.log(members);
   const handleGetMembers = async (groupId) => {
     const { data, error } = await getMembers(groupId);
     if (!error && data) {

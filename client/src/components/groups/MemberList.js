@@ -11,6 +11,7 @@ import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
 import { MemberContext } from "@/context/MemberContext";
+import Snackbar from "@/components/Snackbar";
 
 const MemberListContainer = styled("div")({
   display: "flex",
@@ -51,16 +52,18 @@ function MemberList({ groupId }) {
   const { members, getMembers, inviteMember } = useContext(MemberContext);
   const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   useEffect(() => {
     const fetchMembers = async () => {
       const { error } = await getMembers(groupId);
       if (error) {
-        console.error(`Error fetching members: ${error.message}`);
+        setError(`Error fetching members: ${error.message}`);
       }
     };
     fetchMembers();
-  }, [groupId, getMembers]);
+  }, [groupId]);
 
   const handleOpenInviteDialog = () => {
     setIsInviteDialogOpen(true);
@@ -73,7 +76,9 @@ function MemberList({ groupId }) {
   const handleInviteSubmit = async () => {
     const { error } = await inviteMember(groupId, email, "member");
     if (error) {
-      console.error(`Error inviting member: ${error.message}`);
+      setError(`Error inviting member: ${error.message}`);
+    } else {
+      setSuccess("Member Added successfully!");
     }
     setEmail("");
     setIsInviteDialogOpen(false);
@@ -83,7 +88,7 @@ function MemberList({ groupId }) {
     <MemberListContainer>
       {members.map((member) => (
         <Tooltip
-          key={member.group_id}
+          key={member.user_id}
           title={member.username}
           arrow
           placement="right"
@@ -125,6 +130,8 @@ function MemberList({ groupId }) {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar message={error} setMessage={setError} status="error" />
+      <Snackbar message={success} setMessage={setSuccess} status="success" />
     </MemberListContainer>
   );
 }
