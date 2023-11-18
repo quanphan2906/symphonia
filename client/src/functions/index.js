@@ -8,7 +8,7 @@ export {
   deleteGroup,
 } from "./groups";
 
-export { getMembers, joinGroup } from "./member";
+export { getMembers, joinGroup, inviteMember } from "./member";
 
 export {
   createSong,

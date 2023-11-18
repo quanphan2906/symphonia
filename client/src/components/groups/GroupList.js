@@ -102,12 +102,16 @@ export default function GroupList() {
   return (
     <GroupListContainer>
       {groups.map((group) => (
-        <GroupAvatar
+        <Tooltip
           key={group.group_id}
-          onClick={() => handleGroupClick(group.group_id)}
+          title={group.group_name}
+          arrow
+          placement="left"
         >
-          {group.group_name.charAt(0).toUpperCase()}
-        </GroupAvatar>
+          <GroupAvatar onClick={() => handleGroupClick(group.group_id)}>
+            {group.group_name.charAt(0).toUpperCase()}
+          </GroupAvatar>
+        </Tooltip>
       ))}
       <ButtonContainer>
         <Tooltip title="Add Group" arrow placement="left">

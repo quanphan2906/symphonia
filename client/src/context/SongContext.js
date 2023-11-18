@@ -17,7 +17,7 @@ function SongProvider({ children }) {
   const handleCreateSong = async (groupId, name, author, coverImage) => {
     const { data, error } = await createSong(groupId, name, author, coverImage);
     if (data) {
-      setSongs((prevSongs) => [...prevSongs, data]);
+      setSongs((prevSongs) => [...prevSongs, { ...data, tags: [] }]);
       return { success: true };
     }
     return { success: false, error };
@@ -48,7 +48,9 @@ function SongProvider({ children }) {
     const { data, error } = await updateSong(songId, name, author, coverImage);
     if (data) {
       setSongs((prevSongs) =>
-        prevSongs.map((song) => (song.song_id === songId ? data : song))
+        prevSongs.map((song) =>
+          song.song_id === songId ? { ...data, tags: song.tags } : song
+        )
       );
       return { success: true };
     }
@@ -77,7 +79,9 @@ function SongProvider({ children }) {
     // Update the songs state to include the new tag
     setSongs((prevSongs) =>
       prevSongs.map((song) =>
-        song.song_id === songId ? { ...song, tags: [...song.tags, data] } : song
+        song.song_id === songId
+          ? { ...song, tags: [...song.tags, data] }
+          : song
       )
     );
     return { success: true };

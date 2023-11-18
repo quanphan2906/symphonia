@@ -4,8 +4,9 @@ import Container from "@mui/material/Container";
 import { UserContext } from "@/context/UserContext";
 
 import Header from "@/components/Header";
-import GroupList from "@/components/groups/GroupList"; // Import GroupList component
+import GroupList from "@/components/groups/GroupList";
 import GroupDetails from "@/components/groups/GroupDetails";
+import MemberList from "@/components/groups/MemberList";
 
 function GroupPage() {
   const { user } = useContext(UserContext);
@@ -25,6 +26,8 @@ function GroupPage() {
           <Container>
             <GroupDetails groupId={groupId} />
           </Container>
+
+          <MemberList groupId={groupId} />
         </div>
       )}
     </div>
