@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { SongContext } from "@/context/SongContext";
 import Snackbar from "@/components/Snackbar";
+import { SpotifyEmbed } from "../SpotifyEmbed";
 
 const SongListItem = styled(ListItem)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -17,6 +18,8 @@ const SongListItem = styled(ListItem)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
   border: `1px solid ${theme.palette.divider}`,
   borderRadius: theme.shape.borderRadius,
+  display: `flex`,
+  flexDirection: `column`,
 }));
 
 function SongItem({ song, onDelete }) {
@@ -49,39 +52,54 @@ function SongItem({ song, onDelete }) {
 
   return (
     <SongListItem>
-      <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle1" gutterBottom>
-          {`${song.name} - ${song.author}`}
-        </Typography>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          {song?.tags?.map((tag, index) => (
-            <Chip
-              key={index}
-              label={tag.tag}
-              onDelete={() => handleDeleteTag(song.song_id, tag.tag)}
-            />
-          ))}
+      <Box sx={{ width: `100%`, display: `flex`, marginBottom: `1rem` }}>
+        <Box sx={{ flexGrow: 1 }}>
+          <Typography variant="subtitle1" gutterBottom>
+            {`${song.name} - ${song.author}`}
+          </Typography>
+          <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+            {song?.tags?.map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag.tag}
+                onDelete={() => handleDeleteTag(song.song_id, tag.tag)}
+              />
+            ))}
+          </Box>
         </Box>
-      </Box>
-      <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-        <IconButton color="primary" aria-label="Add tag" onClick={handleAddTag}>
-          <AddIcon />
+        <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
+          <IconButton
+            color="primary"
+            aria-label="Add tag"
+            onClick={handleAddTag}
+          >
+            <AddIcon />
+          </IconButton>
+          <TextField
+            label="Tag"
+            size="small"
+            variant="outlined"
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+          />
+        </Box>
+        <IconButton
+          edge="end"
+          aria-label="Delete song"
+          onClick={() => onDelete(song.song_id)}
+        >
+          <DeleteIcon />
         </IconButton>
-        <TextField
-          label="Tag"
-          size="small"
-          variant="outlined"
-          value={newTag}
-          onChange={(e) => setNewTag(e.target.value)}
-        />
       </Box>
-      <IconButton
-        edge="end"
-        aria-label="Delete song"
-        onClick={() => onDelete(song.song_id)}
-      >
-        <DeleteIcon />
-      </IconButton>
+      {song.url ? (
+        <SpotifyEmbed
+          // link={
+          //   "https://open.spotify.com/track/1mKDbug8bbfDmLe7I4CJpe?si=27ac5f4763934f1e"
+          // }
+          link={song.url}
+          wide
+        />
+      ) : null}
       <Snackbar message={error} setMessage={setError} status="error" />
       <Snackbar message={success} setMessage={setSuccess} status="success" />
     </SongListItem>
