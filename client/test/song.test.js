@@ -7,25 +7,28 @@ import {
   logout,
   searchSongsByName,
 } from "../src/functions";
-import { removeAllGroups, removeAllUsers, removeAllSongs } from "./helper";
+import { removeTestGroups, removeTestUsers, removeTestSongs } from "./helper";
 
 describe("Songs management test suite", () => {
   let groupId;
+  let userIds;
 
   beforeAll(async () => {
-    await removeAllSongs();
-    await removeAllGroups();
-    await removeAllUsers();
-
     const fakeEmail = "testuser@example.com";
     const fakePassword = "password";
     const fakeUsername = "testuser";
     const fakeUserAvatar = "userAvatar";
-    await signup(fakeEmail, fakePassword, fakeUsername, fakeUserAvatar);
+    userIds = [];
+    const { data } = await signup(
+      fakeEmail,
+      fakePassword,
+      fakeUsername,
+      fakeUserAvatar
+    );
+    userIds.push(data.user.user_id);
 
     const avatar = "groupAvatar";
     const groupName = "New Group";
-
     const {
       data: { group },
     } = await createGroup(groupName, avatar);
@@ -35,9 +38,9 @@ describe("Songs management test suite", () => {
 
   afterAll(async () => {
     await logout();
-    await removeAllSongs();
-    await removeAllGroups();
-    await removeAllUsers();
+    await removeTestSongs(groupId);
+    await removeTestGroups([groupId]);
+    await removeTestUsers(userIds);
   }, 15000);
 
   it("4.1 expect errors when no author present", async () => {

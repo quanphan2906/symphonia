@@ -38,6 +38,14 @@ export async function updateSong(songId, name, author, coverImage) {
   return { data, error: error ? Error(error.message) : null };
 }
 
+export async function deleteSong(songId) {
+  // Delete the song
+  const { error } = await supabase.from("songs").delete().eq("song_id", songId);
+
+  const err = error ? Error(error.message) : null;
+  return { data: null, err };
+}
+
 export async function searchSongsByName(groupId, searchTerm) {
   // Validate input
   if (!groupId) {

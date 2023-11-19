@@ -2,13 +2,13 @@ import { validateToken } from "../src/functions/auth";
 import {
   signup,
   login,
-  // logout,
+  logout,
   getUser,
   updateUser,
   deleteUser,
-} from "../src/functions/index";
+} from "../src/functions";
 
-import { removeAllUsers } from "./helper";
+import { removeTestUsers } from "./helper";
 
 describe("User Management Functions", () => {
   let fakeEmail;
@@ -17,19 +17,21 @@ describe("User Management Functions", () => {
   let fakeFirstName;
   let fakeLastName;
   let fakeUsername;
+  let fakeUserIds;
 
   beforeAll(async () => {
-    await removeAllUsers();
     fakeEmail = "testuser@example.com";
     fakePassword = "password";
     fakeFirstName = "test";
     fakeLastName = "user";
     fakeUsername = "test user";
     fakeUserAvatar = "userAvatar";
+    fakeUserIds = [];
   });
 
   afterAll(async () => {
-    await removeAllUsers();
+    await logout();
+    await removeTestUsers(fakeUserIds);
   });
 
   describe("Signup function", () => {
@@ -56,6 +58,7 @@ describe("User Management Functions", () => {
         fakeUserAvatar
       );
 
+      fakeUserIds.push(data.user.user_id);
       expect(error).toBeNull();
       expect(data.user.email).toBe(fakeEmail);
       expect(data.user.username).toBe(`${fakeFirstName} ${fakeLastName}`);
@@ -144,31 +147,20 @@ describe("User Management Functions", () => {
         altEmail = "existing@gmail.com";
         altUserName = "existing";
 
-        await signup(
+        const { data: signupData } = await signup(
           altEmail, // alternative email
           fakePassword,
           altUserName, // alternative username
           fakeUserAvatar
         );
 
+        fakeUserIds.push(signupData.user.user_id);
+
         const { data } = await login(fakeEmail, fakePassword);
         accessToken = data.session.access_token;
       });
 
-      // TODO: Fix this test, the username is changed in the code
-      // it("2.4 should return an error when updating username/email to an already used value", async () => {
-      //   const { data, error } = await updateUser(
-      //     "new_email@gmail.com",
-      //     undefined,
-      //     altUserName,
-      //     undefined
-      //   );
-
-      //   expect(error).toBeTruthy();
-      //   expect(data).toBeNull();
-      // });
-
-      it("2.5 should return no error when user updates with same email and username as before", async () => {
+      it("2.4 should return no error when user updates with same email and username as before", async () => {
         const { data, error } = await updateUser(
           fakeEmail,
           undefined,
@@ -180,7 +172,7 @@ describe("User Management Functions", () => {
         expect(data).toBe("User updated successfully");
       });
 
-      it("2.6 should update account information in both Supabase Auth and the database", async () => {
+      it("2.5 should update account information in both Supabase Auth and the database", async () => {
         const { data, error } = await updateUser(
           "new_email@gmail.com",
           undefined,
@@ -194,7 +186,7 @@ describe("User Management Functions", () => {
     });
 
     describe("deleteUser", () => {
-      it("2.7 should delete the account from both Supabase Auth and the database", async () => {
+      it("2.6 should delete the account from both Supabase Auth and the database", async () => {
         const { data, error } = await deleteUser(accessToken, userId);
 
         expect(error).toBeNull();

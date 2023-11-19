@@ -8,11 +8,13 @@ export {
   deleteGroup,
 } from "./groups";
 
-export { getMembers, joinGroup } from "./member";
+export { getMembers, joinGroup, inviteMember } from "./member";
 
 export {
   createSong,
   getSongsByGroupId,
-  updateSong,
+  updateSong, deleteSong,
   searchSongsByName,
 } from "./songs";
+
+export { addSongTag, removeSongTag, getSongTags } from "./songTags";

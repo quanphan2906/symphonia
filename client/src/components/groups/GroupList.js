@@ -71,7 +71,7 @@ export default function GroupList() {
     };
 
     fetchGroups();
-  }, [user.user_id, getGroupsByUserId]);
+  }, [user.user_id]);
 
   const handleGroupClick = (groupId) => {
     router.push(`/groups/${groupId}`);
@@ -102,12 +102,16 @@ export default function GroupList() {
   return (
     <GroupListContainer>
       {groups.map((group) => (
-        <GroupAvatar
+        <Tooltip
           key={group.group_id}
-          onClick={() => handleGroupClick(group.group_id)}
+          title={group.group_name}
+          arrow
+          placement="left"
         >
-          {group.group_name.charAt(0).toUpperCase()}
-        </GroupAvatar>
+          <GroupAvatar onClick={() => handleGroupClick(group.group_id)}>
+            {group.group_name.charAt(0).toUpperCase()}
+          </GroupAvatar>
+        </Tooltip>
       ))}
       <ButtonContainer>
         <Tooltip title="Add Group" arrow placement="left">
@@ -161,8 +165,8 @@ export default function GroupList() {
         </DialogActions>
       </Dialog>
 
-      <Snackbar message={error} status="error" />
-      <Snackbar message={success} status="success" />
+      <Snackbar message={error} setMessage={setError} status="error" />
+      <Snackbar message={success} setMessage={setSuccess} status="success" />
     </GroupListContainer>
   );
 }
