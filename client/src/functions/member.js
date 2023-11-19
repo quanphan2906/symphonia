@@ -53,7 +53,7 @@ export const joinGroup = async (groupId) => {
   // Add user to group
   const { error: membershipError } = await supabase
     .from("memberships")
-    .insert({ user_id: userId, group_id: groupId, role });
+    .insert({ user_id: userId, group_id: groupId, role: "member" });
 
   if (membershipError) {
     return { data: null, error: Error(membershipError.message) };
