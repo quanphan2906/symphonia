@@ -53,7 +53,8 @@ function GroupDetails({ groupId }) {
       groupId,
       newSong.name,
       newSong.artist,
-      newSong.coverImage
+      newSong.coverImage,
+      newSong.url
     );
 
     if (success) {

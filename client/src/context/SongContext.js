@@ -14,8 +14,14 @@ export const SongContext = createContext();
 function SongProvider({ children }) {
   const [songs, setSongs] = useState([]);
 
-  const handleCreateSong = async (groupId, name, author, coverImage) => {
-    const { data, error } = await createSong(groupId, name, author, coverImage);
+  const handleCreateSong = async (groupId, name, author, coverImage, url) => {
+    const { data, error } = await createSong(
+      groupId,
+      name,
+      author,
+      coverImage,
+      url
+    );
     if (data) {
       setSongs((prevSongs) => [...prevSongs, { ...data, tags: [] }]);
       return { success: true };
@@ -79,9 +85,7 @@ function SongProvider({ children }) {
     // Update the songs state to include the new tag
     setSongs((prevSongs) =>
       prevSongs.map((song) =>
-        song.song_id === songId
-          ? { ...song, tags: [...song.tags, data] }
-          : song
+        song.song_id === songId ? { ...song, tags: [...song.tags, data] } : song
       )
     );
     return { success: true };

@@ -1,10 +1,10 @@
 import supabase from "./setup";
 
-export async function createSong(groupId, name, author, coverImage) {
+export async function createSong(groupId, name, author, coverImage, url) {
   // Create the song
   const { data, error } = await supabase
     .from("songs")
-    .insert([{ group_id: groupId, cover_image: coverImage, name, author }])
+    .insert([{ group_id: groupId, cover_image: coverImage, name, author, url }])
     .select()
     .single();
 

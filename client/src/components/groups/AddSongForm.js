@@ -10,7 +10,7 @@ import { styled } from "@mui/system";
 
 const FormContainer = styled(Box)({
   display: "flex",
-  flexDirection: "row",
+  flexDirection: "column",
   gap: "1rem",
   padding: "1rem",
   maxWidth: "100%",
@@ -20,6 +20,7 @@ const FormContainer = styled(Box)({
 function AddSongForm({ onAddSong, open, handleClose }) {
   const [newSongName, setNewSongName] = useState("");
   const [newArtist, setNewArtist] = useState("");
+  const [newUrl, setNewUrl] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -28,10 +29,12 @@ function AddSongForm({ onAddSong, open, handleClose }) {
         name: newSongName.trim(),
         artist: newArtist.trim(),
         tags: [],
+        url: newUrl.trim(),
       };
       onAddSong(newSong);
       setNewSongName("");
       setNewArtist("");
+      setNewUrl("");
       handleClose();
     }
   };
@@ -53,6 +56,13 @@ function AddSongForm({ onAddSong, open, handleClose }) {
             variant="outlined"
             value={newArtist}
             onChange={(e) => setNewArtist(e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Spotify URL"
+            variant="outlined"
+            value={newUrl}
+            onChange={(e) => setNewUrl(e.target.value)}
             fullWidth
           />
         </FormContainer>
