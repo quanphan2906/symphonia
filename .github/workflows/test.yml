@@ -24,6 +24,8 @@ jobs:
         run: |
           echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" > client/.env.local
           echo "NEXT_PUBLIC_SUPABASE_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_KEY }}" >> client/.env.local
+          echo "NEXT_PUBLIC_SUPABASE_KEY=${{ secrets.NEXT_PUBLIC_SPOTIFY_CLIENT_ID }}" >> client/.env.local
+          echo "NEXT_PUBLIC_SUPABASE_KEY=${{ secrets.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET }}" >> client/.env.local
 
       - name: Run Jest Tests
         working-directory: client
