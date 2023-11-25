@@ -25,6 +25,8 @@ const GroupListContainer = styled("div")({
   boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
   width: "75px",
   height: "calc(100vh - 64px)",
+  position: "fixed",
+  top: "64px",
 });
 
 const GroupAvatar = styled(Avatar)({

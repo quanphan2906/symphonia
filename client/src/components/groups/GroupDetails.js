@@ -9,6 +9,7 @@ import { GroupContext } from "@/context/GroupContext";
 import { SongContext } from "@/context/SongContext";
 import AddSongForm from "@/components/groups/AddSongForm";
 import FilterPanel from "@/components/groups/FilterPanel";
+import Recommendations from "@/components/groups/Recommendations";
 import SongItem from "@/components/groups/SongItem";
 import Snackbar from "@/components/Snackbar";
 
@@ -145,6 +146,8 @@ function GroupDetails({ groupId }) {
           Delete Group
         </Button>
       </Box>
+
+      <Recommendations />
 
       <AddSongForm
         onAddSong={handleAddSong} // TODO: tags are not being added or edited yet

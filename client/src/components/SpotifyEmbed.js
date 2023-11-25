@@ -1,6 +1,6 @@
 import React from "react";
 
-export const SpotifyEmbed = ({
+export default function SpotifyEmbed({
   link,
   style = {},
   wide = false,
@@ -9,7 +9,7 @@ export const SpotifyEmbed = ({
   frameBorder = 0,
   allow = "encrypted-media",
   ...props
-}) => {
+}) {
   const url = new URL(link);
   return (
     <iframe
@@ -26,4 +26,4 @@ export const SpotifyEmbed = ({
       {...props}
     />
   );
-};
+}

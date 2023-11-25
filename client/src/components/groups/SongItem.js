@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { SongContext } from "@/context/SongContext";
 import Snackbar from "@/components/Snackbar";
-import { SpotifyEmbed } from "../SpotifyEmbed";
+import SpotifyEmbed from "@/components/SpotifyEmbed";
 
 const SongListItem = styled(ListItem)(({ theme }) => ({
   marginBottom: theme.spacing(2),
@@ -52,19 +52,28 @@ function SongItem({ song, onDelete }) {
 
   return (
     <SongListItem>
-      <Box sx={{ width: `100%`, display: `flex`, marginBottom: `1rem` }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="subtitle1" gutterBottom>
-            {`${song.name} - ${song.author}`}
-          </Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-            {song?.tags?.map((tag, index) => (
-              <Chip
-                key={index}
-                label={tag.tag}
-                onDelete={() => handleDeleteTag(song.song_id, tag.tag)}
-              />
-            ))}
+      <Box sx={{ width: `100%`, display: `flex` }}>
+        <Box sx={{ display: "flex", gap: 2, flexGrow: 1 }}>
+          {song.url && <SpotifyEmbed link={song.url} wide />}
+          <Box>
+            {!song.url && (
+              <>
+                <Typography variant="h6">{song.name}</Typography>
+                <Typography variant="subtitle1" color="textSecondary">
+                  {song.author}
+                </Typography>
+              </>
+            )}
+
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+              {song?.tags?.map((tag, index) => (
+                <Chip
+                  key={index}
+                  label={tag.tag}
+                  onDelete={() => handleDeleteTag(song.song_id, tag.tag)}
+                />
+              ))}
+            </Box>
           </Box>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
@@ -81,6 +90,7 @@ function SongItem({ song, onDelete }) {
             variant="outlined"
             value={newTag}
             onChange={(e) => setNewTag(e.target.value)}
+            sx={{ width: "8rem" }}
           />
         </Box>
         <IconButton
@@ -91,15 +101,6 @@ function SongItem({ song, onDelete }) {
           <DeleteIcon />
         </IconButton>
       </Box>
-      {song.url ? (
-        <SpotifyEmbed
-          // link={
-          //   "https://open.spotify.com/track/1mKDbug8bbfDmLe7I4CJpe?si=27ac5f4763934f1e"
-          // }
-          link={song.url}
-          wide
-        />
-      ) : null}
       <Snackbar message={error} setMessage={setError} status="error" />
       <Snackbar message={success} setMessage={setSuccess} status="success" />
     </SongListItem>

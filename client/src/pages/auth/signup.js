@@ -64,7 +64,7 @@ function SignupPage() {
         container
         justifyContent="center"
         alignItems="center"
-        style={{ height: "calc(100vh - 64px)" }}
+        style={{ height: "100vh" }}
       >
         <Paper elevation={4} style={{ padding: "2rem" }}>
           <Typography variant="h5" align="center" gutterBottom>
