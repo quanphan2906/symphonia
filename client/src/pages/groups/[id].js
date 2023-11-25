@@ -20,7 +20,7 @@ function GroupPage() {
     <div>
       <Header />
       {user && (
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", paddingTop: "64px" }}>
           <GroupList />
 
           <Container>

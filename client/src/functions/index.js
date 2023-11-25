@@ -13,8 +13,11 @@ export { getMembers, joinGroup, inviteMember } from "./member";
 export {
   createSong,
   getSongsByGroupId,
-  updateSong, deleteSong,
+  updateSong,
+  deleteSong,
   searchSongsByName,
 } from "./songs";
 
 export { addSongTag, removeSongTag, getSongTags } from "./songTags";
+
+export { fetchSpotifyRecommendations, searchSpotify } from "./spotifyAPI";

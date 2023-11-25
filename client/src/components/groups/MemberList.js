@@ -22,6 +22,9 @@ const MemberListContainer = styled("div")({
   boxShadow: "2px 0 5px rgba(0,0,0,0.1)",
   width: "75px",
   height: "calc(100vh - 64px)",
+  position: "fixed",
+  right: "0",
+  top: "64px",
 });
 
 const MemberAvatar = styled(Avatar)({

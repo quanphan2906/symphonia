@@ -4,6 +4,7 @@ import GroupProvider from "./GroupContext";
 import SongProvider from "./SongContext";
 import MemberProvider from "./MemberContext";
 import LoadingProvider from "./LoadingContext";
+import SpotifyProvider from "./SpotifyContext";
 
 const AppContextProvider = ({ children }) => {
   const providers = [
@@ -12,6 +13,7 @@ const AppContextProvider = ({ children }) => {
     SongProvider,
     MemberProvider,
     LoadingProvider,
+    SpotifyProvider,
   ];
 
   return providers.reduce(

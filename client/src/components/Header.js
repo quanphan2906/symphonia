@@ -87,7 +87,7 @@ export default function Header() {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="fixed">
       <Toolbar>
         <Link
           onClick={handleHomeClick}
